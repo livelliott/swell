@@ -6,7 +6,7 @@ def members(request):
   # creates members objects with Member vals
   members = Member.objects.all().values()
   # load members template to display
-  template = loader.get_template('member.html')
+  template = loader.get_template('members.html')
   # creating object containing members object
   context = {
     'members': members,
@@ -30,9 +30,8 @@ def main(request):
   return HttpResponse(template.render())
 
 def testing(request):
-  mydata = Member.objects.values()
   template = loader.get_template('template.html')
   context = {
-    'mymembers': mydata,
+    'fruits': ["cherry", "apple", "strawberry"]
   }
   return HttpResponse(template.render(context, request))
