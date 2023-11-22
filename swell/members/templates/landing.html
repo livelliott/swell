@@ -1,0 +1,11 @@
+{% extends "master.html" %}
+
+{% block title %}
+  landing page
+{% endblock %}
+
+{% block content %}
+  <p>this is the landing page that will have info about the app!</p>
+  <a class="nav-link" href="{% url 'login' %}">go to login page</a>
+  
+{% endblock %}

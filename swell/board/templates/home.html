@@ -3,10 +3,15 @@
 {% block title %}
   swell
 {% endblock %}
-
 {% block content %}
   <div class="main">
     <h1>swell home</h1>
-    <p>hehe</p>
+    {% if user.is_authenticated %}
+      <p>user is logged in!</p>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'logout' %}">logout</a>
+      </li>
+      <!-- give the option to logout -->
+    {% endif %}
   </div>
 {% endblock %}

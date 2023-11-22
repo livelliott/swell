@@ -9,6 +9,11 @@
     <h1>login</h1>
     <form action="" method="POST">
       {% csrf_token %}
+      {% if messages %}
+        {% for message in messages %}
+        <p  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
+        {% endfor %}
+      {% endif %}
       <div class="username">
         <label for="username" class="form-label">Username</label>
         <input type="text" class="form-control" name="username">
@@ -17,7 +22,7 @@
         <label for="password" class="form-label">Password</label>
         <input type="password" class="form-control" name="password">
       </div>
-      <input type="submit" value="submit" class="btn btn-secondary">
+      <input type="submit" value="login" class="btn btn-secondary" name="login-btn">
     </form>
 
   </div>

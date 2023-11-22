@@ -7,5 +7,7 @@ from . import views
 app_name = 'members'
 # route users that comes in via 127.0.0.1:8000/...
 urlpatterns = [
-    path('', views.login_user, name="login_users"),
+    path('', views.landing, name="members_landing"),
+    path('login/', views.login_user, name="login_users"),
+    path('logout/', views.logout_user, name="logout_users"),
 ]
