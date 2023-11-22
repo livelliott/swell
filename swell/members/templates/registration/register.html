@@ -1,0 +1,22 @@
+{% extends "master.html" %}
+
+{% block title %}
+  Register
+{% endblock %}
+
+{% block content %}
+{% if form.errors %}
+  <p>There was an error with your form...</p>
+{% endif %}
+  <div class="main">
+    <h1>Register</h1>
+    <form action="{% url 'members:register_users' %}" method="POST">
+      {% csrf_token %}
+      {{ form }}
+      <div class="btn">
+        <input type="submit" value="Create Account" class="btn btn-secondary" name="create-acc-btn">
+      </div>
+    </form>
+    <p>Already have an account? <a href="{% url 'members:login_users' %}">Log in</a></p>
+  </div>
+{% endblock %}

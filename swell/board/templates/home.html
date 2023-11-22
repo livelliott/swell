@@ -6,12 +6,14 @@
 {% block content %}
   <div class="main">
     <h1>swell home</h1>
-    {% if user.is_authenticated %}
-      <p>user is logged in!</p>
+    {% if messages %}
+      {% for message in messages %}
+      <p  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
+      {% endfor %}
+    {% endif %}
+      <p>This is where board content will be!</p>
       <li class="nav-item">
         <a class="nav-link" href="{% url 'logout' %}">logout</a>
       </li>
-      <!-- give the option to logout -->
-    {% endif %}
   </div>
 {% endblock %}
