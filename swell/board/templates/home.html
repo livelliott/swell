@@ -11,9 +11,14 @@
       <p  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
       {% endfor %}
     {% endif %}
-      <p>This is where board content will be!</p>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'logout' %}">logout</a>
-      </li>
+    <div class="board-actions">
+      <div class="create-group">
+        <p>Create a group to send an envelope</p>
+        <a href="{% url 'board:board_create_group' %}">Create Group</a>
+      </div>
+      <div class="joined-groups">
+      </div>
+    </div>
+    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
   </div>
 {% endblock %}

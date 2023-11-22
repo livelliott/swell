@@ -1,0 +1,23 @@
+{% extends "master.html" %}
+
+{% block title %}
+  Create Group
+{% endblock %}
+{% block content %}
+  <div class="main">
+    <h1>Create Group</h1>
+    {% if messages %}
+      {% for message in messages %}
+      <p  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
+      {% endfor %}
+    {% endif %}
+      <p>This is where the user creates a group.</p>
+      <li>Group name</li>
+      <li>Add members</li>
+      <li>Default questions -> can be modifed</li>
+      <li>Add more questions -> will also be added to question bank</li> 
+      <li>Remember that a question should have an author, either swell or the creator</li> 
+      <a href="{% url 'board:board_home' %}">Exit</a>
+      <a href="#">Send Envelope</a>
+  </div>
+{% endblock %}

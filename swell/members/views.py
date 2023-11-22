@@ -8,11 +8,11 @@ from .forms import RegisterUserForm
 def landing(request):
     return render(request, 'landing.html', {})
 
-
 def login_user(request):
     # if the user is tries to view protected page
     if not request.user.is_authenticated and 'next' in request.GET:
         messages.info(request, 'You must log in to view this page.')
+    # redirect home if already logged in
     if request.user.is_authenticated:
         return redirect(reverse('board:board_home'))
     # if the did 'something' >> i.e. clicked a button
@@ -24,7 +24,7 @@ def login_user(request):
         if user is not None:
             login(request, user)
             # Redirect to a success page.
-            messages.success(request, "You are logged in as " + username + ".")
+            messages.success(request, "You are logged in as @" + username + ".")
             return redirect(reverse('board:board_home'))
         else:
             # Return an 'invalid login' error message.
