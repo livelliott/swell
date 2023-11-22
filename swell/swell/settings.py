@@ -34,7 +34,7 @@ STATICFILES_DIRS = [
 SECRET_KEY = 'django-insecure-lejmswi3$msoqr15u6)if7p+^&)ml1zrbr!mvwl5#(*@zwb!f('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'board',
     'members',
 ]
 
@@ -88,12 +89,12 @@ WSGI_APPLICATION = 'swell.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': os.getenv('MASTER_USER'),
-        'PASSWORD': os.getenv('USER_PASSWORD'),
-        'HOST': os.getenv('ENDPOINT'),
-        'PORT': os.getenv('PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '/Users/livelliott/Documents/github/swell/swell/db.sqlite3',
+        #'USER': os.getenv('MASTER_USER'),
+        #'PASSWORD': os.getenv('USER_PASSWORD'),
+        #'HOST': os.getenv('ENDPOINT'),
+        #'PORT': os.getenv('PORT'),
     }
 }
 

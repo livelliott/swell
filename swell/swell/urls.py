@@ -16,9 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.contrib import auth
 
 # route users that comes in via 127.0.0.1:8000/...
 urlpatterns = [
-    path('', include('members.urls')),
     path('admin/', admin.site.urls),
+    path('', include('members.urls'),),
+    path('board/', include('board.urls')),
+    path('', include('django.contrib.auth.urls')),
 ]

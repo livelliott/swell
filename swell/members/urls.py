@@ -1,10 +1,11 @@
-from django.urls import path
+from django.contrib import admin
+from django.urls import include, path
+from django.urls import path, reverse_lazy
+from django.views.generic import RedirectView
 from . import views
 
-# specific for members application
+app_name = 'members'
+# route users that comes in via 127.0.0.1:8000/...
 urlpatterns = [
-    path('', views.main, name='main'),
-    path('members/', views.members, name='members'),
-    path('members/details/<int:id>', views.details, name='details'),
-    path('testing/', views.testing, name='testing'),
+    path('', views.login_user, name="login_users"),
 ]
