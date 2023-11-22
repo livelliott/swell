@@ -1,0 +1,24 @@
+{% extends "master.html" %}
+
+{% block title %}
+  login
+{% endblock %}
+
+{% block content %}
+  <div class="main">
+    <h1>login</h1>
+    <form action="" method="POST">
+      {% csrf_token %}
+      <div class="username">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" name="username">
+      </div>
+      <div class="password">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" name="password">
+      </div>
+      <input type="submit" value="submit" class="btn btn-secondary">
+    </form>
+
+  </div>
+{% endblock %}
