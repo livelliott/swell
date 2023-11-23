@@ -50,6 +50,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'board',
     'members',
+    'question',
+    'envelope',
+    'letter',
 ]
 
 MIDDLEWARE = [
