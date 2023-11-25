@@ -1,8 +1,8 @@
 from django.urls import path
 from . import views
 
-app_name = 'board'
+app_name = 'envelope'
 # specific for members application
 urlpatterns = [
-    path('home/', views.home, name='board_home'),
+    path('create/', views.create_envelope, name='envelope_create'),
 ]
