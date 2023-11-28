@@ -1,4 +1,7 @@
 from django.contrib import admin
 from .models import Envelope
-# Register your models here.
-admin.site.register(Envelope)
+
+class EnvelopeAdmin(admin.ModelAdmin):
+    list_display = ('envelope_name', 'envelope_id')
+
+admin.site.register(Envelope, EnvelopeAdmin)
