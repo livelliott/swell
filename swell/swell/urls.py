@@ -24,5 +24,6 @@ urlpatterns = [
     path('', include('members.urls'),),
     path('board/', include('board.urls')),
     path('envelope/', include('envelope.urls')),
+    path('invite/', include('invite.urls')),
     path('', include('django.contrib.auth.urls')),
 ]

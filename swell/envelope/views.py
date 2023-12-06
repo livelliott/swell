@@ -5,6 +5,7 @@ from django.contrib import messages
 from .models import Envelope
 from django.contrib.auth.models import User
 from swell.constants import EMAIL_PATTERN
+from invitations.utils import get_invitation_model
 import re
 
 @login_required

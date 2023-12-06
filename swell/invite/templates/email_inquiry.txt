@@ -1,0 +1,11 @@
+Name: {{contactName}}
+
+
+Email: {{contactEmail}}
+
+{% if contactDate %}
+Date: {{contactDate}}
+{% endif %}
+
+
+{{contactMessage}}
