@@ -1,13 +1,14 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+# a single instance of an invitation
 class Invitation(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_invitations')
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_invitations')
     group_name = models.CharField(max_length=255)
     is_accepted = models.BooleanField(default=False)
 
-# represents an instance of a group
+# an instance of a group >> initialized when an envelope is created
 class Group(models.Model):
     group_name = models.CharField(max_length=255)
     group_id = models.AutoField(primary_key=True)
