@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 from swell.constants import EMAIL_PATTERN
 from invitations.utils import get_invitation_model
 from .forms import EnvelopeForm
+from django.core.mail import send_mail
+from django.conf import settings
 import re
 
 @login_required
@@ -44,11 +46,13 @@ def valid_invite(user):
         # Handle the case where the user with the given username does not exist
         return None
 
+# invites all members via email
 def invite_members(request, members):
     split_members = [member.strip() for member in members.split(' ')]
     for member in split_members:
         user_email = valid_invite(member)
         if user_email:
+            send_mail(subject="Invite to Swell",message="This is where the invite message will be.",from_email=settings.EMAIL_HOST_USER, recipient_list=[user_email], html_message=None)
             messages.success(request, "Invite sent to " + user_email)
             # send invite
         else:
