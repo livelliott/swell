@@ -18,7 +18,6 @@ class Migration(migrations.Migration):
             name='Group',
             fields=[
                 ('group_name', models.CharField(max_length=255)),
-                ('group_id', models.AutoField(primary_key=True, serialize=False)),
             ],
         ),
         migrations.CreateModel(

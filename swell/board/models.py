@@ -5,13 +5,13 @@ from django.db import models
 class Invitation(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_invitations')
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_invitations')
-    group_name = models.CharField(max_length=255)
+    key = models.IntegerField()
     is_accepted = models.BooleanField(default=False)
 
 # an instance of a group >> initialized when an envelope is created
 class Group(models.Model):
     group_name = models.CharField(max_length=255)
-    group_id = models.AutoField(primary_key=True)
+    key = models.IntegerField()
     # invitations associated with the group
     group_invitations = models.ManyToManyField('Invitation', through='UserGroup')
 
