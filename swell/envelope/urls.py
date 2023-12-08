@@ -4,5 +4,6 @@ from . import views
 app_name = 'envelope'
 # specific for members application
 urlpatterns = [
-    path('create/', views.create_envelope, name='envelope_create'),
+    path('create/', views.envelope_create, name='envelope_create'),
+    path('create-envelope-success/', views.envelope_create_success, name='envelope_create_success'),
 ]

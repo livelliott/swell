@@ -5,8 +5,9 @@ from .models import Envelope
 class EnvelopeForm(forms.ModelForm):
     class Meta:
         model = Envelope
-        fields = ["envelope_name", "envelope_query_datetime"]
+        fields = ["envelope_name", "envelope_query_date", "envelope_due_date"]
         widgets = {
-            'envelope_due_datetime': forms.DateInput(attrs={'type': 'date'}),
+            'envelope_query_date': forms.DateInput(attrs={'type': 'date'}),
+            'envelope_due_date': forms.DateInput(attrs={'type': 'date'}),
         }
     invitee_emails = forms.CharField(max_length=1000, required=True)
