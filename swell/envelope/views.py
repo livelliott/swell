@@ -1,7 +1,7 @@
 from django.urls import reverse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages 
+from django.contrib import messages
 from board.models import Group
 from .models import Envelope
 from django.contrib.auth.models import User
@@ -22,11 +22,15 @@ def envelope_create(request):
             envelope_name = form.cleaned_data['envelope_name']
             envelope_query_date = form.cleaned_data['envelope_query_date']
             envelope_due_date = form.cleaned_data['envelope_due_date']
-            # create 
-            envelope = Envelope.objects.create(envelope_name=envelope_name, 
+            # create envelope instance
+            envelope = Envelope.objects.create(envelope_name=envelope_name,
+                                               envelope_admin=request.user,
                                                envelope_query_date=envelope_query_date, 
                                                envelope_due_date=envelope_due_date)
-            # envelope_id = form.cleaned_data['envelope_id']
+            # create group and link with envelope
+            group = Group.objects.create(envelope_id=envelope.envelope_id)
+            # send invitations via email
+            
             members = form.cleaned_data['members']
             invite_members(request, members)
             envelope_form.save()

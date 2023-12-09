@@ -4,15 +4,14 @@ import uuid
 
 # a single instance of an invitation
 class Invitation(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_invitations')
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_invitations')
     envelope_id = models.IntegerField()
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_invitations')
     invite_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_invitations')
     is_accepted = models.BooleanField(default=False)
 
 # an instance of a group >> initialized when an envelope is created
 class Group(models.Model):
-    group_name = models.CharField(max_length=255)
     envelope_id = models.IntegerField()
     # invitations associated with the group
     group_invitations = models.ManyToManyField('Invitation', through='UserGroup')
