@@ -18,8 +18,15 @@ def envelope_create(request):
         form = EnvelopeForm(request.POST)
         if form.is_valid():
             envelope_form = form.save(commit=False)
-            # envelope_id = form.cleaned_data['envelope_id']
+            # retrieve info from the form
             envelope_name = form.cleaned_data['envelope_name']
+            envelope_query_date = form.cleaned_data['envelope_query_date']
+            envelope_due_date = form.cleaned_data['envelope_due_date']
+            # create 
+            envelope = Envelope.objects.create(envelope_name=envelope_name, 
+                                               envelope_query_date=envelope_query_date, 
+                                               envelope_due_date=envelope_due_date)
+            # envelope_id = form.cleaned_data['envelope_id']
             members = form.cleaned_data['members']
             invite_members(request, members)
             envelope_form.save()
@@ -46,7 +53,7 @@ def valid_invite(user):
         # Handle the case where the user with the given username does not exist
         return None
 
-# invites all members via email
+# sends invites to all members via email
 def invite_members(request, members):
     split_members = [member.strip() for member in members.split(' ')]
     for member in split_members:
