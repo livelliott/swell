@@ -7,7 +7,7 @@ class Invitation(models.Model):
     envelope_id = models.IntegerField()
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_invitations')
     invite_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_invitations')
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_invitations', editable=False, blank=True, null=True)
     is_accepted = models.BooleanField(default=False)
 
 # an instance of a group >> initialized when an envelope is created

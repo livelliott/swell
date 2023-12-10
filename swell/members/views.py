@@ -41,8 +41,8 @@ def logout_user(request):
     return redirect('login')
 
 
-def accept_invite(request):
-    return render(request, 'accept_invite.html')
+def accept_invite(request, invite_token):
+    return render(request, 'accept_invite.html', {'invite_token': invite_token})
 
 def register_users(request):
     # if user filled out the form

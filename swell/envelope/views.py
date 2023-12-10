@@ -2,15 +2,16 @@ from django.urls import reverse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from board.models import Group
+from board.models import Group, Invitation
 from .models import Envelope
 from django.contrib.auth.models import User
 from swell.constants import EMAIL_PATTERN
-from invitations.utils import get_invitation_model
+# from board.models import send_invite
 from .forms import EnvelopeForm
 from django.core.mail import send_mail
 from django.conf import settings
 import re
+import os
 
 @login_required
 def envelope_create(request):
@@ -24,11 +25,15 @@ def envelope_create(request):
             envelope_due_date = form.cleaned_data['envelope_due_date']
             envelope_form.envelope_admin = request.user
             # create envelope instance
-            # Create envelope instance with envelope_admin set to the current user
             Envelope(envelope_name=envelope_name,
                      envelope_query_date=envelope_query_date,
                      envelope_due_date=envelope_due_date)
-            # send invitations via email
+            envelope_form.save()
+            # create corresponding group instance
+            envelope_id = envelope_form.envelope_id
+            Group.objects.create(envelope_id=envelope_id)
+            # send invitation to envelope via email
+            invite_members(request, envelope_id, form.cleaned_data['members'])
             return redirect(reverse('envelope:envelope_create_success'))
     else:
         form = EnvelopeForm()
@@ -49,16 +54,16 @@ def valid_invite(user):
         user_instance = User.objects.get(username=user)
         return user_instance.email
       except User.DoesNotExist:
-        # Handle the case where the user with the given username does not exist
+        # given username does not exist in the database
         return None
 
 # sends invites to all members via email
-def invite_members(request, members):
+def invite_members(request, envelope_id, members):
     split_members = [member.strip() for member in members.split(' ')]
     for member in split_members:
         user_email = valid_invite(member)
         if user_email:
-            send_mail(subject="Invite to Swell",message="This is where the invite message will be.",from_email=settings.EMAIL_HOST_USER, recipient_list=[user_email], html_message=None)
+            send_invite(envelope_id, request.user, user_email)
             messages.success(request, "Invite sent to " + user_email)
             # send invite
         else:
@@ -66,3 +71,12 @@ def invite_members(request, members):
             # save and display could not send invite message
         pass
     pass
+
+def send_invite(envelope_id, sender, email):
+    invite = Invitation.objects.create(envelope_id=envelope_id, sender=sender)
+    custom_link = f"http://{os.getenv('HOST_DOMAIN')}accept-invite/{invite.invite_token}"
+    send_mail(subject="Invite to Swell",
+              message=f"Invite link: {custom_link}",
+              from_email=settings.EMAIL_HOST_USER,
+              recipient_list=[email],
+              html_message=None)
