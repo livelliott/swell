@@ -22,18 +22,13 @@ def envelope_create(request):
             envelope_name = form.cleaned_data['envelope_name']
             envelope_query_date = form.cleaned_data['envelope_query_date']
             envelope_due_date = form.cleaned_data['envelope_due_date']
+            envelope_form.envelope_admin = request.user
             # create envelope instance
-            envelope = Envelope.objects.create(envelope_name=envelope_name,
-                                               envelope_admin=request.user,
-                                               envelope_query_date=envelope_query_date, 
-                                               envelope_due_date=envelope_due_date)
-            # create group and link with envelope
-            group = Group.objects.create(envelope_id=envelope.envelope_id)
+            # Create envelope instance with envelope_admin set to the current user
+            Envelope(envelope_name=envelope_name,
+                     envelope_query_date=envelope_query_date,
+                     envelope_due_date=envelope_due_date)
             # send invitations via email
-            
-            members = form.cleaned_data['members']
-            invite_members(request, members)
-            envelope_form.save()
             return redirect(reverse('envelope:envelope_create_success'))
     else:
         form = EnvelopeForm()

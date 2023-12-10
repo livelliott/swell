@@ -16,10 +16,11 @@ def home(request):
 
 def send_invite(request, envelope_id, sender, email):
     invite = Invitation.objects.create(envelope_id=envelope_id, sender=sender)
-    custom_link = f"https://{os.getenv('HOST_DOMAIN')}/register/?invite_token={invite.invite_token}"
+    custom_link = f"https://{os.getenv('HOST_DOMAIN')}/accept-invite/?invite_token={invite.invite_token}"
     send_mail(subject="Invite to Swell",
               message=f"Invite link: {custom_link}",
               from_email=settings.EMAIL_HOST_USER,
               recipient_list=[email],
               html_message=None)
     messages.success(request, "Invite sent to " + email)
+    

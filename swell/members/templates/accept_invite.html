@@ -1,0 +1,18 @@
+{% extends "master.html" %}
+
+{% block title %}
+  accept invite
+{% endblock %}
+{% block content %}
+  <div class="main">
+    <h1>Accept Invite</h1>
+    {% if messages %}
+      {% for message in messages %}
+      <p  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
+      {% endfor %}
+    {% endif %}
+    <div class="board-actions">
+      <p>This is the page where you will accept your invitation to the envelope!</p>
+    </div>
+  </div>
+{% endblock %}

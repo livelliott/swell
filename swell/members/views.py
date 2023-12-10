@@ -40,6 +40,10 @@ def logout_user(request):
         messages.success(request, "Successfully logged out.")
     return redirect('login')
 
+
+def accept_invite(request):
+    return render(request, 'accept_invite.html')
+
 def register_users(request):
     # if user filled out the form
     if request.method == "POST":
