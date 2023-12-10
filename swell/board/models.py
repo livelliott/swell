@@ -5,9 +5,10 @@ import uuid
 # a single instance of an invitation
 class Invitation(models.Model):
     envelope_id = models.IntegerField()
+    email = models.EmailField(null=True, blank=True)
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_invitations')
     invite_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_invitations', editable=False, blank=True, null=True)
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_invitations', editable=True, blank=True, null=True)
     is_accepted = models.BooleanField(default=False)
 
 # an instance of a group >> initialized when an envelope is created
@@ -19,7 +20,7 @@ class Group(models.Model):
 # represents a single user's relationship to a specific group
 # user in multiple groups >> multiple UserGroup instances
 class UserGroup(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     is_invited = models.BooleanField(default=False)
     # invitation associated with the user and group

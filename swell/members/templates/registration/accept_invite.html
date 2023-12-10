@@ -13,6 +13,10 @@
     {% endif %}
     <div class="board-actions">
       <p>This is the page where you will accept your invitation to the envelope!</p>
+      <form method="post" action="">
+        {% csrf_token %}
+        {{ form.as_p }}
+      </form>
     </div>
   </div>
 {% endblock %}

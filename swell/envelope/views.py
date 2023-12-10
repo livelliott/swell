@@ -13,6 +13,8 @@ from django.conf import settings
 import re
 import os
 
+# creates an envelope instance and invites users
+# @redirect - creation success screen
 @login_required
 def envelope_create(request):
     if request.method == 'POST':
@@ -31,7 +33,8 @@ def envelope_create(request):
             envelope_form.save()
             # create corresponding group instance
             envelope_id = envelope_form.envelope_id
-            Group.objects.create(envelope_id=envelope_id)
+            group = Group.objects.create(envelope_id=envelope_id)
+            group.save()
             # send invitation to envelope via email
             invite_members(request, envelope_id, form.cleaned_data['members'])
             return redirect(reverse('envelope:envelope_create_success'))
@@ -39,12 +42,13 @@ def envelope_create(request):
         form = EnvelopeForm()
     return render(request, 'envelope_create.html', {'form': form})
 
+# displays envelope creation success screen
 @login_required
 def envelope_create_success(request):
     return render(request, 'envelope_create_success.html')
 
 # checks if string is a valid email/username
-# @return [String] valid email address
+# @return valid email address
 def valid_invite(user):
     # if valid email address
     if re.fullmatch(EMAIL_PATTERN, user):
@@ -58,6 +62,7 @@ def valid_invite(user):
         return None
 
 # sends invites to all members via email
+# @redirect - none
 def invite_members(request, envelope_id, members):
     split_members = [member.strip() for member in members.split(' ')]
     for member in split_members:
@@ -65,18 +70,22 @@ def invite_members(request, envelope_id, members):
         if user_email:
             send_invite(envelope_id, request.user, user_email)
             messages.success(request, "Invite sent to " + user_email)
-            # send invite
         else:
             messages.success(request, "ERROR")
-            # save and display could not send invite message
         pass
     pass
 
+# sends email invite with custom link
+# @redirect - none
 def send_invite(envelope_id, sender, email):
-    invite = Invitation.objects.create(envelope_id=envelope_id, sender=sender)
-    custom_link = f"http://{os.getenv('HOST_DOMAIN')}accept-invite/{invite.invite_token}"
+    # create and send invite
+    invite = Invitation.objects.create(envelope_id=envelope_id, email=email, sender=sender)
+    group = get_object_or_404(Group, envelope_id=invite.envelope_id)
+    custom_link = f"http://{os.getenv('HOST_DOMAIN')}/accept-invite/{invite.invite_token}"
     send_mail(subject="Invite to Swell",
               message=f"Invite link: {custom_link}",
               from_email=settings.EMAIL_HOST_USER,
               recipient_list=[email],
               html_message=None)
+    # connect invite to group
+    group.group_invitations.add(invite)

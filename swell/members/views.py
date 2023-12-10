@@ -1,13 +1,18 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages 
 from django.urls import reverse
 from .forms import RegisterUserForm
+from board.models import Invitation, Group, UserGroup
 
+# displays the landing page
 def landing(request):
     return render(request, 'landing.html', {})
 
+# login page for the user
+# @redirect - home page if logged in
 def login_user(request):
     # if the user is tries to view protected page
     if not request.user.is_authenticated and 'next' in request.GET:
@@ -33,17 +38,17 @@ def login_user(request):
             return redirect(reverse('members:login_users'))
     else:
         return render(request, 'registration/login.html', {})
-    
+
+# logout user functionality
+# @redirect - login page if logged out  
 def logout_user(request):
-    logout(request) # calling function we imported
+    logout(request)
     if not request.user.is_authenticated:
         messages.success(request, "Successfully logged out.")
     return redirect('login')
 
-
-def accept_invite(request, invite_token):
-    return render(request, 'accept_invite.html', {'invite_token': invite_token})
-
+# registers new user
+# @redirect - home page if registered
 def register_users(request):
     # if user filled out the form
     if request.method == "POST":
@@ -60,3 +65,22 @@ def register_users(request):
         form = RegisterUserForm()
         pass
     return render(request, 'registration/register.html', {'form':form})
+
+@login_required
+def accept_invite(request, invite_token):
+    invite = get_object_or_404(Invitation, invite_token=invite_token)
+    group = get_object_or_404(Group, envelope_id=invite.envelope_id)
+    # check if the authenticated user's email matches the invitation
+    if request.user.email == invite.email:
+        # add the authenticated user to the group
+        UserGroup(user=request.user, group=group, invitation=invite, is_invited=True)
+        # update invite status
+        invite.recipient = request.user
+        invite.is_accepted = True
+        invite.save()
+        messages.success(request, f"Successfully joined group {invite.envelope_id}!")
+        return redirect(reverse('board:board_home'))
+    # if the email does not match
+
+    return render(request, 'registration/accept_invite.html', {'invite_token': invite_token})
+    # return render(request, 'registration/register_with_invite.html', {'form': form})
