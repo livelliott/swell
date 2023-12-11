@@ -2,7 +2,7 @@ from django.urls import reverse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from board.models import Group, Invitation
+from board.models import Group, Invitation, UserGroup
 from .models import Envelope
 from django.contrib.auth.models import User
 from swell.constants import EMAIL_PATTERN
@@ -89,3 +89,14 @@ def send_invite(envelope_id, sender, email):
               html_message=None)
     # connect invite to group
     group.group_invitations.add(invite)
+    user_group = UserGroup(invitation=invite, group=group)
+    user_group.is_invited = True
+    add_if_registered(email, user_group)
+    user_group.save()
+
+# Adds user to user group if their email exists in db
+def add_if_registered(email, user_group):
+    try:
+        user_group.user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return None

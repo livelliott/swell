@@ -69,11 +69,8 @@ def register_users(request):
 @login_required
 def accept_invite(request, invite_token):
     invite = get_object_or_404(Invitation, invite_token=invite_token)
-    group = get_object_or_404(Group, envelope_id=invite.envelope_id)
     # check if the authenticated user's email matches the invitation
     if request.user.email == invite.email:
-        # add the authenticated user to the group
-        UserGroup(user=request.user, group=group, invitation=invite, is_invited=True)
         # update invite status
         invite.recipient = request.user
         invite.is_accepted = True
@@ -83,4 +80,3 @@ def accept_invite(request, invite_token):
     # if the email does not match
 
     return render(request, 'registration/accept_invite.html', {'invite_token': invite_token})
-    # return render(request, 'registration/register_with_invite.html', {'form': form})
