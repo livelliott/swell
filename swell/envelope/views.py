@@ -33,7 +33,7 @@ def envelope_create(request):
             envelope_form.save()
             # create corresponding group instance
             envelope_id = envelope_form.envelope_id
-            group = Group.objects.create(envelope_id=envelope_id)
+            group = Group.objects.create(envelope=envelope_form)
             group.save()
             # send invitation to envelope via email
             invite_members(request, envelope_id, form.cleaned_data['members'])
@@ -89,14 +89,14 @@ def send_invite(envelope_id, sender, email):
               html_message=None)
     # connect invite to group
     group.group_invitations.add(invite)
-    user_group = UserGroup(invitation=invite, group=group)
-    user_group.is_invited = True
-    add_if_registered(email, user_group)
+    user_group = UserGroup.objects.create(invitation=invite, group=group, is_invited=True, user=user_registered(email))
+
     user_group.save()
 
-# Adds user to user group if their email exists in db
-def add_if_registered(email, user_group):
+def user_registered(email):
     try:
-        user_group.user = User.objects.get(email=email)
+        user = User.objects.get(email=email)
+        return user
     except User.DoesNotExist:
         return None
+    

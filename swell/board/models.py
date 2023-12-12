@@ -13,9 +13,9 @@ class Invitation(models.Model):
 
 # an instance of a group >> initialized when an envelope is created
 class Group(models.Model):
-    envelope_id = models.IntegerField(null=True, blank=True)
+    envelope = models.ForeignKey('envelope.Envelope', on_delete=models.CASCADE)
     # invitations associated with the group
-    group_invitations = models.ManyToManyField('Invitation', through='UserGroup')
+    group_invitations = models.ManyToManyField('Invitation', through='board.UserGroup')
 
 # represents a single user's relationship to a specific group
 # user in multiple groups >> multiple UserGroup instances
