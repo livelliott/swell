@@ -16,7 +16,13 @@
         <p>Create a group to send an envelope</p>
         <a href="{% url 'envelope:envelope_create' %}">Create Group</a>
       </div>
-      <div class="joined-groups">
+      <div class="groups">
+        <h1>Created Envelopes</h1>
+        <ul>
+            {% for envelope in created_by %}
+                <li>{{ envelope.envelope_name }} - id: {{ envelope.envelope_id }}</li>
+            {% endfor %}
+        </ul>
       </div>
     </div>
     <a class="nav-link" href="{% url 'logout' %}">Logout</a>

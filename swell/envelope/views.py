@@ -69,7 +69,7 @@ def invite_members(request, envelope_id, members):
     for member in split_members:
         user_email = valid_invite(member)
         if user_email:
-            send_invite(envelope_id, request.user, user_email)
+            send_invite(request=request, envelope_id=envelope_id, email=user_email)
             messages.success(request, "Invite sent to " + user_email)
         else:
             messages.success(request, "ERROR")
@@ -79,9 +79,9 @@ def invite_members(request, envelope_id, members):
 # sends email invite with custom link
 # @redirect - none
 @login_required
-def send_invite(envelope_id, sender, email):
+def send_invite(request, envelope_id, email):
     # create and send invite
-    invite = Invitation.objects.create(envelope_id=envelope_id, email=email, sender=sender)
+    invite = Invitation.objects.create(envelope_id=envelope_id, email=email, sender=request.user)
     group = get_object_or_404(Group, envelope_id=invite.envelope_id)
     custom_link = f"http://{os.getenv('HOST_DOMAIN')}/accept-invite/{invite.invite_token}"
     send_mail(subject="Invite to Swell",
