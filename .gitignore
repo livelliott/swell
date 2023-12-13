@@ -38,3 +38,6 @@ db.sqlite3
 *.log
 
 .env
+
+# Admin files
+admin/
