@@ -63,6 +63,7 @@ def valid_invite(user):
 
 # sends invites to all members via email
 # @redirect - none
+@login_required
 def invite_members(request, envelope_id, members):
     split_members = [member.strip() for member in members.split(' ')]
     for member in split_members:
@@ -77,6 +78,7 @@ def invite_members(request, envelope_id, members):
 
 # sends email invite with custom link
 # @redirect - none
+@login_required
 def send_invite(envelope_id, sender, email):
     # create and send invite
     invite = Invitation.objects.create(envelope_id=envelope_id, email=email, sender=sender)
@@ -89,14 +91,15 @@ def send_invite(envelope_id, sender, email):
               html_message=None)
     # connect invite to group
     group.group_invitations.add(invite)
-    user_group = UserGroup.objects.create(invitation=invite, group=group, is_invited=True, user=user_registered(email))
-
+    user_group = UserGroup.objects.create(invitation=invite, group=group)
+    user_group.user = user_registered(email)
     user_group.save()
 
+# checks if user is registered in db
+# @return user object if it exists
 def user_registered(email):
     try:
         user = User.objects.get(email=email)
         return user
     except User.DoesNotExist:
         return None
-    
