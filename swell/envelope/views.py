@@ -27,9 +27,10 @@ def envelope_create(request):
             envelope_due_date = form.cleaned_data['envelope_due_date']
             envelope_form.envelope_admin = request.user
             # create envelope instance
-            Envelope(envelope_name=envelope_name,
+            env = Envelope(envelope_name=envelope_name,
                      envelope_query_date=envelope_query_date,
                      envelope_due_date=envelope_due_date)
+            env.save()
             envelope_form.save()
             # create corresponding group instance
             envelope_id = envelope_form.envelope_id
@@ -68,7 +69,7 @@ def invite_members(request, envelope_id, members):
     split_members = [member.strip() for member in members.split(' ')]
     for member in split_members:
         user_email = valid_invite(member)
-        if user_email:
+        if user_email != None:
             send_invite(request=request, envelope_id=envelope_id, email=user_email)
             messages.success(request, "Invite sent to " + user_email)
         else:

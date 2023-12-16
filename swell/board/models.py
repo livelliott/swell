@@ -22,6 +22,7 @@ class Group(models.Model):
 class UserGroup(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    display_name = models.CharField(max_length=50, default=None, null=True)
     # invitation associated with the user and group
     invitation = models.ForeignKey('Invitation', on_delete=models.CASCADE)
 
