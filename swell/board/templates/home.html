@@ -4,26 +4,31 @@
   swell
 {% endblock %}
 {% block content %}
-  <div class="main">
-    <h1>swell home</h1>
-    {% if messages %}
-      {% for message in messages %}
-      <p  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
-      {% endfor %}
-    {% endif %}
+  <head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'home.css' %}">
+  </head>
+  <div class="container">
     <div class="board-actions">
-      <div class="create-group">
-        <p>Create a group to send an envelope</p>
-        <a href="{% url 'envelope:envelope_create' %}">Create Group</a>
-      </div>
       <div class="groups">
-        <h1>Created Envelopes</h1>
-        <ul>
-            {% for envelope in created_by %}
-                <li>{{ envelope.envelope_name }} - id: {{ envelope.envelope_id }}</li>
+        <h1 class="main-title">@{{ user.username }}'s envelopes</h1>
+          {% if messages %}
+            {% for message in messages %}
+              <p  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
             {% endfor %}
-        </ul>
+          {% endif %}
+        <div class="envelopes">
+          {% for envelope in created_by %}
+            <div class="env-tile">
+              <div class="env-title">{{ envelope.envelope_name }}</div>
+              <div class="env-due-date">{{ envelope.delivery_date }}</div>
+            </div>
+          {% endfor %}
+        </div>
       </div>
+    </div>
+    <div class="create-group">
+      <a href="{% url 'envelope:envelope_create' %}">Create Group</a>
     </div>
     <a class="nav-link" href="{% url 'logout' %}">Logout</a>
   </div>

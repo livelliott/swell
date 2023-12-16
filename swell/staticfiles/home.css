@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@300;400;600&family=Yeseva+One&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --main-pink: #FF2D8E;
+  --grey-outline: #a6a6a68d;
+}
+
+body {
+  font-family: 'Karla', sans-serif;
+}
+
+.container {
+  margin: auto;
+  width: 60%;
+}
+
+.main-title {
+  color: var(--main-pink)
+}
+
+.envelopes {
+  display: flex;
+  gap: 2em;
+}
+
+.env-tile {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 33.33333%;
+  height: 10em;
+  justify-content: center;
+  padding: 3em;
+  border-radius: 1.5em;
+  border: 0.15rem solid var(--grey-outline);
+}
+
+.env-title {
+  font-family: 'Yeseva One', serif;
+  font-size: 2rem;
+}

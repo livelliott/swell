@@ -15,16 +15,13 @@ from django.contrib.auth.decorators import login_required
 def home_page(request):
     # Assuming you have a user object
     user = request.user
-
     created_by = Envelope.objects.filter(envelope_admin=user)
     member_of = UserGroup.objects.filter(user=user)
     invited_to = Invitation.objects.filter(recipient=user)
-
-    # Pass the filtered data to the template
     context = {
+        'user': user,
         'created_by': created_by,
         'member_of': member_of,
         'invited_to': invited_to,
     }
-
     return render(request, 'home.html', context)

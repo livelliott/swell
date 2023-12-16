@@ -11,3 +11,15 @@ class Envelope(models.Model):
     envelope_query_date = models.DateField(default=(timezone.now() + timezone.timedelta(days=2)).date(), null=True)
     envelope_due_date = models.DateField(blank=True, null=True)
     # questions in envelope TBD...
+    @property
+    def delivery_date(self):
+        if self.envelope_due_date:
+            today = timezone.now().date()
+            remaining_days = max(0, (self.envelope_due_date - today).days)
+            if remaining_days == 0:
+                return "Delivers today"
+            elif remaining_days == 1:
+                return "Delivers tomorrow"
+            else:
+                return f"Delivers in {remaining_days} days"
+        return None
