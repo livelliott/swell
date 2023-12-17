@@ -18,13 +18,7 @@
             {% endfor %}
           {% endif %}
         <div class="envelopes">
-          {% for envelope in created_by %}
-            <div class="env-tile">
-              <div class="env-title">{{ envelope.envelope_name }}</div>
-              <div class="env-due-date">{{ envelope.delivery_date }}</div>
-            </div>
-          {% endfor %}
-          {% for envelope in member_of %}
+          {% for envelope in all_envelopes %}
             <div class="env-tile">
               <div class="env-title">{{ envelope.envelope_name }}</div>
               <div class="env-due-date">{{ envelope.delivery_date }}</div>

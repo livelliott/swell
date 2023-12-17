@@ -1,28 +1,20 @@
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template import loader
 from .models import Invitation, UserGroup, Group
 from envelope.models import Envelope
-from django.core.mail import send_mail
-from django.conf import settings
-from django.contrib import messages
+from itertools import chain
 from dotenv import load_dotenv
 import os
 load_dotenv()
-from django.contrib.auth.decorators import login_required
-
 
 def home_page(request):
-    # Assuming you have a user object
     user = request.user
-    created_by = Envelope.objects.filter(envelope_admin=user)
-    member_of = get_joined_envelopes(request)
-    invited_to = Invitation.objects.filter(recipient=user)
+    created_envelopes = Envelope.objects.filter(envelope_admin=user)
+    joined_envelopes = get_joined_envelopes(request)
+    all_envelopes =  list(chain(created_envelopes, joined_envelopes))
+    sorted_envelopes = sorted(all_envelopes, key=lambda x: x.envelope_due_date)
     context = {
         'user': user,
-        'created_by': created_by,
-        'member_of': member_of,
-        'invited_to': invited_to,
+        'all_envelopes': sorted_envelopes,
     }
     return render(request, 'home.html', context)
 
