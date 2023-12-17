@@ -6,7 +6,7 @@
     <form method="post" action="">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Submit">
+        <input type="submit" value="Create Envelope">
     </form>
     <a href="{% url 'board:board_home' %}"><button type="button">Return to Home</button></a>
 {% endblock %}

@@ -26,16 +26,13 @@ def envelope_create(request):
             envelope_query_date = form.cleaned_data['envelope_query_date']
             envelope_due_date = form.cleaned_data['envelope_due_date']
             envelope_form.envelope_admin = request.user
-            # create envelope instance
-            env = Envelope(envelope_name=envelope_name,
-                     envelope_query_date=envelope_query_date,
-                     envelope_due_date=envelope_due_date)
-            env.save()
             envelope_form.save()
+
             # create corresponding group instance
             envelope_id = envelope_form.envelope_id
             group = Group.objects.create(envelope=envelope_form)
             group.save()
+
             # send invitation to envelope via email
             invite_members(request, envelope_id, form.cleaned_data['members'])
             return redirect(reverse('envelope:envelope_create_success'))
@@ -82,7 +79,8 @@ def invite_members(request, envelope_id, members):
 @login_required
 def send_invite(request, envelope_id, email):
     # create and send invite
-    invite = Invitation.objects.create(envelope_id=envelope_id, email=email, sender=request.user)
+    invite = Invitation(envelope_id=envelope_id, email=email, sender=request.user)
+    invite.save()
     group = get_object_or_404(Group, envelope_id=invite.envelope_id)
     custom_link = f"http://{os.getenv('HOST_DOMAIN')}/accept-invite/{invite.invite_token}"
     send_mail(subject="Invite to Swell",
@@ -92,15 +90,3 @@ def send_invite(request, envelope_id, email):
               html_message=None)
     # connect invite to group
     group.group_invitations.add(invite)
-    user_group = UserGroup.objects.create(invitation=invite, group=group)
-    user_group.user = user_registered(email)
-    user_group.save()
-
-# checks if user is registered in db
-# @return user object if it exists
-def user_registered(email):
-    try:
-        user = User.objects.get(email=email)
-        return user
-    except User.DoesNotExist:
-        return None

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages 
 from django.urls import reverse
-from .forms import RegisterUserForm
+from .forms import RegisterUserForm, AcceptInvite
 from board.models import Invitation, Group, UserGroup
 
 # displays the landing page
@@ -61,20 +61,25 @@ def register_users(request):
             return redirect(reverse('board:board_home'))
     else:
         form = RegisterUserForm()
-        pass
     return render(request, 'registration/register.html', {'form':form})
 
 @login_required
 def accept_invite(request, invite_token):
-    invite = get_object_or_404(Invitation, invite_token=invite_token)
-    # check if the authenticated user's email matches the invitation
-    if request.user.email == invite.email:
-        # update invite status
-        invite.recipient = request.user
-        invite.is_accepted = True
-        invite.save()
-        messages.success(request, f"Successfully joined group {invite.envelope_id}!")
-        return redirect(reverse('board:board_home'))
-    # if the email does not match
-
-    return render(request, 'registration/accept_invite.html', {'invite_token': invite_token})
+    form = AcceptInvite()
+    if request.method == "POST":
+        form = AcceptInvite(request.POST)
+        if form.is_valid():
+            current_user = request.user
+            invite = get_object_or_404(Invitation, invite_token=invite_token)
+            group = get_object_or_404(Group, group_invitations=invite)
+            # update invite status
+            invite.recipient = current_user
+            invite.email = current_user.email
+            invite.is_accepted = True
+            invite.save()
+            # create user group with form info
+            user_group = UserGroup(user=current_user, group=group, invitation=invite, display_name=form.cleaned_data['display_name'])
+            user_group.save()
+            messages.success(request, f"Successfully joined group {invite.envelope_id}!")
+            return redirect(reverse('board:board_home'))
+    return render(request, 'registration/accept_invite.html', {'form': form, 'invite_token': invite_token})

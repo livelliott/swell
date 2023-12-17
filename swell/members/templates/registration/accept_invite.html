@@ -15,7 +15,8 @@
       <p>This is the page where you will accept your invitation to the envelope!</p>
       <form method="post" action="">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form }}
+        <input type="submit" value="Join">
       </form>
     </div>
   </div>
