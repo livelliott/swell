@@ -9,7 +9,7 @@
 :root {
   --white: #ffffff;
   --main-pink: #FF2D8E;
-  --grey-outline: #a6a6a6af;
+  --grey-outline: #dfdfdfd3;
   --grey-hover: #ecececf1;
 }
 
@@ -17,15 +17,56 @@ body {
   font-family: 'Karla', sans-serif;
 }
 
+.nav-container {
+    
+    border-bottom: 0.1rem solid var(--grey-outline);
+}
+
+.nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1em 0em;
+    width: 85%;
+    margin: auto;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+#name {
+    font-size: 1.3rem;
+}
+
+#username {
+    font-size: 0.9rem;
+}
+
+.yeseva {
+    font-family: 'Yeseva One', serif;
+}
+
+.karla {
+    font-family: 'Karla', sans-serif;
+}
+
 .container {
   margin: auto;
-  width: 60%;
+  width: 70%;
 }
 
 .main-title {
     font-size: 1.8rem;
     color: var(--main-pink);
-    margin: 0.8em 0em;
+    margin-top: 15vh;
 }
 
 .envelopes {
@@ -38,6 +79,7 @@ body {
     display: flex;
     flex-direction: column;
     flex-basis: 30%;
+    margin-top: 2em;
   }
 
 .env-title {
@@ -47,6 +89,7 @@ body {
 }
 
 #create-envelope {
+    margin-top: 2em;
     fill: var(--white);
     transition: fill 0.2s ease-in-out;
     -moz-transition: fill 0.4s ease-in-out;
