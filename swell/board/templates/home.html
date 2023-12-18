@@ -6,7 +6,7 @@
 {% block content %}
   <head>
     {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'home.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'home_page.css' %}">
   </head>
   <div class="container">
     <div class="board-actions">
@@ -17,18 +17,36 @@
               <p  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
             {% endfor %}
           {% endif %}
+          
         <div class="envelopes">
           {% for envelope in all_envelopes %}
             <div class="env-tile">
+                <svg width="290" height="131" viewBox="0 0 290 131" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="0.5" y="0.5" width="289" height="130" rx="1.5" stroke="black"/>
+                  <path d="M289 1.25L144.5 88.75" stroke="black"/>
+                  <path d="M1 1.25L145 88.75" stroke="black"/>
+                  <path d="M1 129.75L123 75.25" stroke="black"/>
+                  <path d="M289 129.75L167 75.25" stroke="black"/>
+                </svg>
               <div class="env-title">{{ envelope.envelope_name }}</div>
               <div class="env-due-date">{{ envelope.delivery_date }}</div>
             </div>
           {% endfor %}
+          <a href="{% url 'envelope:envelope_create' %}" class="create-envelope-container">
+            <div class="create-envelope">
+              <svg id="create-envelope" width="290" height="131" viewBox="0 0 290 131" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0.5" y="0.5" width="289" height="130" stroke="black" stroke-dasharray="7 7"/>
+                <mask id="mask0_40_233" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="124" y="45" width="42" height="42">
+                  <rect id="add-sign" x="124" y="45" width="41.8809" height="41.8809" fill="#D9D9D9"/>
+                </mask>
+                <g mask="url(#mask0_40_233)">
+                  <path d="M144.33 73.5314H145.551V66.5512H152.531V65.3297H145.551V58.3495H144.33V65.3297H137.35V66.5512H144.33V73.5314ZM144.948 81.1223C142.849 81.1223 140.875 80.7239 139.027 79.9273C137.178 79.1306 135.57 78.0495 134.203 76.6838C132.835 75.3181 131.753 73.7122 130.955 71.866C130.157 70.0198 129.759 68.0471 129.759 65.948C129.759 63.8489 130.157 61.8751 130.954 60.0266C131.75 58.1781 132.831 56.5701 134.197 55.2027C135.563 53.8353 137.169 52.7528 139.015 51.9551C140.861 51.1575 142.834 50.7586 144.933 50.7586C147.032 50.7586 149.006 51.1569 150.854 51.9536C152.703 52.7502 154.311 53.8314 155.678 55.1971C157.046 56.5628 158.128 58.1687 158.926 60.0149C159.723 61.8611 160.122 63.8337 160.122 65.9329C160.122 68.032 159.724 70.0058 158.927 71.8543C158.131 73.7028 157.05 75.3108 155.684 76.6782C154.318 78.0456 152.712 79.1281 150.866 79.9258C149.02 80.7234 147.047 81.1223 144.948 81.1223ZM144.94 79.9007C148.838 79.9007 152.139 78.5483 154.844 75.8435C157.548 73.1387 158.901 69.8377 158.901 65.9404C158.901 62.0432 157.548 58.7422 154.844 56.0374C152.139 53.3326 148.838 51.9801 144.94 51.9801C141.043 51.9801 137.742 53.3326 135.037 56.0374C132.333 58.7422 130.98 62.0432 130.98 65.9404C130.98 69.8377 132.333 73.1387 135.037 75.8435C137.742 78.5483 141.043 79.9007 144.94 79.9007Z" fill="#1C1B1F"/>
+                </g>
+              </svg>
+            </div>
+          </a>
         </div>
       </div>
-    </div>
-    <div class="create-group">
-      <a href="{% url 'envelope:envelope_create' %}">Create Group</a>
     </div>
     <a class="nav-link" href="{% url 'logout' %}">Logout</a>
   </div>
