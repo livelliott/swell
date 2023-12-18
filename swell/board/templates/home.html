@@ -10,7 +10,7 @@
   </head>
   <div class="nav-container">
     <nav class="nav-bar">
-      <svg id="logo" height="2.5rem" viewBox="0 0 172 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg id="logo" height="2.8rem" viewBox="0 0 172 46" fill="none" xmlns="http://www.w3.org/2000/svg">
           <text fill="black" xml:space="preserve" style="white-space: pre" font-family="Yeseva One" font-size="40" letter-spacing="0em"><tspan x="0" y="36.5">SOWELL</tspan></text>
           <circle cx="167" cy="9" r="5" fill="#FF2D8E"/>
       </svg>
@@ -21,6 +21,10 @@
         <div class="user-info">
           <div id="name" class="yeseva">{{ user.first_name }} {{ user.last_name }}</div>
           <div id="username" class="karla">@{{ user.username }}</div>
+        </div>
+        <div class="dropdown-content">
+          <a class="nav-link nav-first" href="#">Settings</a>
+          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
         </div>
       </div>
     </nav>
@@ -37,13 +41,13 @@
         <div class="envelopes">
           {% for envelope in all_envelopes %}
             <div class="env-tile">
-                <svg width="290" height="131" viewBox="0 0 290 131" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="0.5" y="0.5" width="289" height="130" rx="1.5" stroke="black"/>
-                  <path d="M289 1.25L144.5 88.75" stroke="black"/>
-                  <path d="M1 1.25L145 88.75" stroke="black"/>
-                  <path d="M1 129.75L123 75.25" stroke="black"/>
-                  <path d="M289 129.75L167 75.25" stroke="black"/>
-                </svg>
+              <svg width="290" height="131" viewBox="0 0 290 131" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0.5" y="0.5" width="289" height="130" rx="2.25" stroke="black"/>
+                <path d="M289 1.25L144.5 88.75" stroke="black"/>
+                <path d="M1 1.25L145 88.75" stroke="black"/>
+                <path d="M1 129.75L123 75.25" stroke="black"/>
+                <path d="M289 129.75L167 75.25" stroke="black"/>
+              </svg>
               <div class="env-title">{{ envelope.envelope_name }}</div>
               <div class="env-due-date">{{ envelope.delivery_date }}</div>
             </div>
@@ -63,7 +67,6 @@
           </a>
         </div>
       </div>
-    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
     </div>
   </body>
 {% endblock %}

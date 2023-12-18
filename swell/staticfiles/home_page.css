@@ -9,8 +9,8 @@
 :root {
   --white: #ffffff;
   --main-pink: #FF2D8E;
-  --grey-outline: #dfdfdfd3;
-  --grey-hover: #ecececf1;
+  --outline-grey: #dfdfdfd3;
+  --hover-pink: #ff2d8f0f;
 }
 
 body {
@@ -18,8 +18,11 @@ body {
 }
 
 .nav-container {
-    
-    border-bottom: 0.1rem solid var(--grey-outline);
+    border-bottom: 0.1rem solid var(--outline-grey);
+}
+.nav-container:hover {
+    border-bottom: 0.1rem solid var(--outline-grey);
+    display: block;
 }
 
 .nav-bar {
@@ -35,6 +38,16 @@ body {
     display: flex;
     align-items: center;
     gap: 0.7em;
+    padding: 0.5em 1em;
+    border-width: 0.1em;
+    border-style: solid;
+    border-color: var(--white);
+    position: relative;
+    transition: border-color 0.3s ease;
+}
+
+.profile-info:hover {
+    border-color: var(--outline-grey);
 }
 
 .user-info {
@@ -48,6 +61,45 @@ body {
 
 #username {
     font-size: 0.9rem;
+}
+
+.dropdown-content {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--white);
+    z-index: 1;
+    margin-top: 0.05em;
+    border-top: 0.5em solid var(--white);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.profile-info:hover .dropdown-content {
+    display: block;
+    opacity: 1;
+}
+
+.nav-link {
+    color: black;
+    display: block;
+    padding: 1em 1.5em;
+    border-width: 0 0.1em 0.1em 0.1em;
+    border-style: solid;
+    border-color: var(--outline-grey);
+    text-decoration: none;
+    background-color: var(--white);
+    transition: background-color 0.5s ease;
+}
+
+.nav-link:hover {
+    background-color: var(--hover-pink);
+}
+
+.nav-first {
+    border-top: 0.1em solid var(--outline-grey);
 }
 
 .yeseva {
@@ -66,7 +118,7 @@ body {
 .main-title {
     font-size: 1.8rem;
     color: var(--main-pink);
-    margin-top: 15vh;
+    margin-top: 13vh;
 }
 
 .envelopes {
@@ -97,5 +149,5 @@ body {
 }
 
 .create-envelope-container:hover #create-envelope {
-    fill: var(--grey-hover);
+    fill: var(--hover-pink);
 }
