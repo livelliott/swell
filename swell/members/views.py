@@ -5,7 +5,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages 
 from django.urls import reverse
 from .forms import RegisterUserForm, AcceptInvite
-from board.models import Invitation, Group, UserGroup
+from board.models import Invitation, UserGroup
+from envelope.models import Envelope
 
 # displays the landing page
 def landing(request):
@@ -71,15 +72,15 @@ def accept_invite(request, invite_token):
         if form.is_valid():
             current_user = request.user
             invite = get_object_or_404(Invitation, invite_token=invite_token)
-            group = get_object_or_404(Group, group_invitations=invite)
+            envelope = get_object_or_404(Envelope, envelope_id=invite.envelope_id)
             # update invite status
             invite.recipient = current_user
             invite.email = current_user.email
             invite.is_accepted = True
             invite.save()
             # create user group with form info
-            user_group = UserGroup(user=current_user, group=group, invitation=invite, display_name=form.cleaned_data['display_name'])
+            user_group = UserGroup(user=current_user, display_name=form.cleaned_data['display_name'], envelope=envelope, env_id=envelope.envelope_id)
             user_group.save()
-            messages.success(request, f"Successfully joined group {invite.envelope_id}!")
+            messages.success(request, f"Successfully joined group {envelope.envelope_name}!")
             return redirect(reverse('board:board_home'))
     return render(request, 'registration/accept_invite.html', {'form': form, 'invite_token': invite_token})

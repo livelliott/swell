@@ -2,7 +2,7 @@ from django.urls import reverse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from board.models import Group, Invitation, UserGroup
+from board.models import Invitation, UserGroup
 from .models import Envelope
 from django.contrib.auth.models import User
 from swell.constants import EMAIL_PATTERN
@@ -30,8 +30,6 @@ def envelope_create(request):
 
             # create corresponding group instance
             envelope_id = envelope_form.envelope_id
-            group = Group.objects.create(envelope=envelope_form)
-            group.save()
 
             # send invitation to envelope via email
             invite_members(request, envelope_id, form.cleaned_data['members'])
@@ -81,12 +79,9 @@ def send_invite(request, envelope_id, email):
     # create and send invite
     invite = Invitation(envelope_id=envelope_id, email=email, sender=request.user)
     invite.save()
-    group = get_object_or_404(Group, envelope_id=invite.envelope_id)
     custom_link = f"http://{os.getenv('HOST_DOMAIN')}/accept-invite/{invite.invite_token}"
     send_mail(subject="Invite to Swell",
               message=f"Invite link: {custom_link}",
               from_email=settings.EMAIL_HOST_USER,
               recipient_list=[email],
               html_message=None)
-    # connect invite to group
-    group.group_invitations.add(invite)

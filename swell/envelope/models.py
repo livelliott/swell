@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from board.models import Group
 from django.utils import timezone
 
 # created by a user, sent to other users

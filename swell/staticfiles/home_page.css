@@ -8,6 +8,7 @@
 
 :root {
   --white: #ffffff;
+  --black: #000; 
   --main-pink: #FF2D8E;
   --outline-grey: #dfdfdfd3;
   --hover-pink: #ff2d8f0f;
@@ -125,6 +126,11 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 2em;
+}
+
+.envelope {
+    color: var(--black);
+    text-decoration: none;
 }
 
 .env-tile {
