@@ -6,7 +6,6 @@ from board.models import Invitation, UserGroup
 from .models import Envelope
 from django.contrib.auth.models import User
 from swell.constants import EMAIL_PATTERN
-# from board.models import send_invite
 from .forms import EnvelopeForm
 from django.core.mail import send_mail
 from django.conf import settings
@@ -25,12 +24,13 @@ def envelope_create(request):
             envelope_name = form.cleaned_data['envelope_name']
             envelope_query_date = form.cleaned_data['envelope_query_date']
             envelope_due_date = form.cleaned_data['envelope_due_date']
+            admin_display_name = form.cleaned_data['admin_display_name']
             envelope_form.envelope_admin = request.user
             envelope_form.save()
-
-            # create corresponding group instance
+            # create corresponding user group instance
             envelope_id = envelope_form.envelope_id
-
+            user_group = UserGroup(user=request.user, display_name=admin_display_name, envelope=envelope_form, env_id=envelope_id)
+            user_group.save()
             # send invitation to envelope via email
             invite_members(request, envelope_id, form.cleaned_data['members'])
             return redirect(reverse('envelope:envelope_create_success'))

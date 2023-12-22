@@ -18,4 +18,5 @@ class EnvelopeForm(forms.ModelForm):
         widgets = {
             'envelope_query_date': forms.DateInput(attrs={'type': 'date'}),
         }
+    admin_display_name = forms.CharField(max_length=50, required=True)
     members = forms.CharField(max_length=1000, required=True)

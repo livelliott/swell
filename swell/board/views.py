@@ -1,14 +1,12 @@
 from django.http import HttpResponseServerError
-from django.shortcuts import get_object_or_404, redirect, render
-from .models import Invitation, UserGroup
+from django.shortcuts import render
+from .models import UserGroup
 from envelope.models import Envelope
 from itertools import chain
-from django.contrib import messages 
-from dotenv import load_dotenv
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-import os
-load_dotenv()
+from envelope.views import valid_invite, send_invite
 
 def home_page(request):
     user = request.user
@@ -37,13 +35,38 @@ def envelope(request, envelope_id):
         envelope = user_group.envelope
         context = {
             'envelope_id': envelope_id,
-            'user': user,
             'envelope': envelope,
+            'user': user,
         }
         return render(request, 'envelope.html', context)
     except ObjectDoesNotExist:
         messages.success(request, "You do not have permission to view this page.")
         return render(request, 'home.html')
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return HttpResponseServerError("An error occurred. Please try again later.")
+
+def envelope_members(request, envelope_id):
+    user = request.user
+    try:
+        # retrieve all of the users in the envelope
+        envelope = Envelope.objects.get(envelope_id=envelope_id)
+        envelope_admin = envelope.envelope_admin
+        envelope_users = UserGroup.objects.filter(envelope=envelope)
+        context = {
+            'user': user,
+            'envelope_admin': envelope_admin,
+            'envelope': envelope,
+            'envelope_users': envelope_users,
+        }
+        # if the 'add user' button is clicked
+        if request.method == 'POST' and user == envelope_admin:
+            # allow admin to invite users to the envelope
+            invite_email = request.POST.get('user_email')
+            if valid_invite(invite_email) != None:
+              send_invite(request, envelope_id, invite_email)
+              messages.success(request, f"Invite sent to {invite_email}")       
+        return render(request, 'envelope_members.html', context)
     except Exception as e:
         print(f"An error occurred: {e}")
         return HttpResponseServerError("An error occurred. Please try again later.")

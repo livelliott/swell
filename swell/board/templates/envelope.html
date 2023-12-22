@@ -6,6 +6,7 @@
 </head>
 <body>
   {% block content %}
+    <a href="/dashboard/envelope/{{ envelope.envelope_id }}/members">Members</a>
     {% if envelope.envelope_admin == user %}
         <p>You are admin</p>
     {% endif %}

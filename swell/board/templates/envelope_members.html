@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block title %}Envelope Members{% endblock %}</title>
+</head>
+<body>
+  {% block content %}
+    {% if messages %}
+      {% for message in messages %}
+        <p  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
+      {% endfor %}
+    {% endif %}
+    <div class="members">
+        <p>Admin: {{ envelope_admin.first_name }} {{ envelope_admin.last_name }} - @{{ envelope_admin.username }}</p>
+        {% for env_user in envelope_users %}
+          <p>{{ env_user.display_name }} - @{{ env_user.user.username }}</p>
+        {% endfor %}
+    </div>
+    {% if envelope.envelope_admin == user %}
+        <form method="post" action="">
+            {% csrf_token %}
+            <label for="user_email">Email for user:</label>
+            <input type="text" id="user_email" name="user_email">
+            <input type="submit" value="Submit">
+        </form>
+    {% endif %}
+  {% endblock %}
+</body>
+</html>
