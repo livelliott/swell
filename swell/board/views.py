@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from envelope.views import valid_invite, send_invite
 
+@login_required
 def home_page(request):
     user = request.user
     created_envelopes = Envelope.objects.filter(envelope_admin=user)
@@ -20,23 +21,18 @@ def home_page(request):
     }
     return render(request, 'home.html', context)
 
-def get_joined_envelopes(request):
-    joined_envelopes = []
-    user_groups = UserGroup.objects.filter(user=request.user)
-    for user_group in user_groups:
-        joined_envelopes.append(user_group.envelope)
-    return joined_envelopes
-
 @login_required
 def envelope(request, envelope_id):
     user = request.user
     try:
         user_group = UserGroup.objects.get(user=user, env_id=envelope_id)
         envelope = user_group.envelope
+        questions = get_envelope_questions(envelope)
         context = {
             'envelope_id': envelope_id,
             'envelope': envelope,
             'user': user,
+            'questions': questions,
         }
         return render(request, 'envelope.html', context)
     except ObjectDoesNotExist:
@@ -46,6 +42,7 @@ def envelope(request, envelope_id):
         print(f"An error occurred: {e}")
         return HttpResponseServerError("An error occurred. Please try again later.")
 
+@login_required
 def envelope_members(request, envelope_id):
     user = request.user
     try:
@@ -59,7 +56,7 @@ def envelope_members(request, envelope_id):
             'envelope': envelope,
             'envelope_users': envelope_users,
         }
-        # if the 'add user' button is clicked
+        # if the admin clicks the 'add user' button
         if request.method == 'POST' and user == envelope_admin:
             # allow admin to invite users to the envelope
             invite_email = request.POST.get('user_email')
@@ -70,3 +67,19 @@ def envelope_members(request, envelope_id):
     except Exception as e:
         print(f"An error occurred: {e}")
         return HttpResponseServerError("An error occurred. Please try again later.")
+
+# returns a list envelopes the user has joined
+def get_joined_envelopes(request):
+    joined_envelopes = []
+    user_groups = UserGroup.objects.filter(user=request.user)
+    for user_group in user_groups:
+        joined_envelopes.append(user_group.envelope)
+    return joined_envelopes
+
+# retrieves all questions associated with envelope
+# returns list of all questions
+def get_envelope_questions(envelope):
+    questions_admin = envelope.questions_admin.all()
+    questions_user = envelope.questions_user.all()
+    questions_default = envelope.questions_default.all()
+    return list(chain(questions_admin, questions_user, questions_default))

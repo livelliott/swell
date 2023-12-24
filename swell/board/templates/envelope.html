@@ -10,7 +10,9 @@
     {% if envelope.envelope_admin == user %}
         <p>You are admin</p>
     {% endif %}
-    
+    {% for question in questions %}
+        <p>{{ question.content }}</p>
+    {% endfor %}
   {% endblock %}
 </body>
 </html>
