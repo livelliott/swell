@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from question.models import DefaultQuestion, AdminQuestion, UserQuestion
 
 # created by a user, sent to other users
 class Envelope(models.Model):
@@ -9,7 +10,9 @@ class Envelope(models.Model):
     envelope_admin = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     envelope_query_date = models.DateField(default=(timezone.now() + timezone.timedelta(days=2)).date(), null=True)
     envelope_due_date = models.DateField(blank=True, null=True)
-    # questions in envelope TBD...
+    questions_default = models.ManyToManyField(DefaultQuestion, blank=True)
+    questions_admin = models.ManyToManyField(AdminQuestion, blank=True)
+    questions_user = models.ManyToManyField(UserQuestion, blank=True)
     @property
     def delivery_date(self):
         if self.envelope_due_date:

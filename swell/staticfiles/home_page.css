@@ -142,8 +142,8 @@ body {
 
 .env-title {
     font-family: 'Yeseva One', serif;
-    font-size: 1.8rem;
-    margin-top: 0.4em;
+    font-size: 1.4rem;
+    margin: 0.4em 0em 0.2em 0em;
 }
 
 #create-envelope {

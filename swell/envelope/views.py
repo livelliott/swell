@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from board.models import Invitation, UserGroup
-from .models import Envelope
+from question.models import DefaultQuestion, AdminQuestion
 from django.contrib.auth.models import User
 from swell.constants import EMAIL_PATTERN
 from .forms import EnvelopeForm
@@ -21,12 +21,10 @@ def envelope_create(request):
         if form.is_valid():
             envelope_form = form.save(commit=False)
             # retrieve info from the form
-            envelope_name = form.cleaned_data['envelope_name']
-            envelope_query_date = form.cleaned_data['envelope_query_date']
-            envelope_due_date = form.cleaned_data['envelope_due_date']
             admin_display_name = form.cleaned_data['admin_display_name']
             envelope_form.envelope_admin = request.user
             envelope_form.save()
+            default_questions(envelope_form)
             # create corresponding user group instance
             envelope_id = envelope_form.envelope_id
             user_group = UserGroup(user=request.user, display_name=admin_display_name, envelope=envelope_form, env_id=envelope_id)
@@ -42,6 +40,14 @@ def envelope_create(request):
 @login_required
 def envelope_create_success(request):
     return render(request, 'envelope_create_success.html')
+
+# adds all default questions to envelope
+# can be disabled by admin
+def default_questions(envelope):
+    all_default_questions = DefaultQuestion.objects.all()
+    for question in all_default_questions:
+        envelope.questions_default.add(question)
+    envelope.save()
 
 # checks if string is a valid email/username
 # @return valid email address
