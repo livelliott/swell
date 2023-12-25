@@ -29,14 +29,15 @@ def envelope(request, envelope_id):
         user_group = UserGroup.objects.get(user=user, env_id=envelope_id)
         envelope = user_group.envelope
         questions = get_envelope_questions(envelope)['questions']
+        prev_answers = get_previous_answers(envelope, user, questions)
+        answers = get_envelope_questions(envelope)['answers']
         context = {
             'envelope_id': envelope_id,
             'envelope': envelope,
             'user': user,
-            'questions': questions,
+            'prev_answers': prev_answers,
         }
         if request.method == 'POST' and envelope_member(user, envelope_id):
-            answers = get_envelope_questions(envelope)['answers']
             for a in answers:
               # answer name == question.id
               user_answer = request.POST.get(a)
@@ -100,7 +101,7 @@ def get_joined_envelopes(request):
     return joined_envelopes
 
 # retrieves all questions associated with envelope
-# returns list of all questions
+# @return [dictionary] - {all questions, corresponding ids}
 def get_envelope_questions(envelope):
     questions_admin = envelope.questions_admin.all()
     questions_user = envelope.questions_user.all()
@@ -109,12 +110,24 @@ def get_envelope_questions(envelope):
     question_ids = [ str(q.id) for q in all_questions ]
     return { 'questions': all_questions, 'answers': question_ids }
 
+# retrieves questions and previous answers if they exist
+# @return [dictionary] - question: previous answer
+def get_previous_answers(envelope, user, questions):
+    prev_answers = {}
+    for question in questions:
+        answered = Answer.objects.filter(envelope=envelope, user=user, question=question).first()
+        # if the question was answered previously
+        if answered:
+            prev_answers[question] = answered.user_answer
+        else:
+            prev_answers[question] = ''
+    return prev_answers
+
+# checks if the user is a member of the envelope
+# @return [boolean] - if a member
 def envelope_member(user, envelope_id):
     try:
         UserGroup.objects.get(user=user, env_id=envelope_id)
         return True
     except ObjectDoesNotExist:
         return False
-
-def update_answer(user, envelope, content):
-    answers_for_envelope = Answer.objects.filter(envelope=envelope, user=user)
