@@ -1,7 +1,8 @@
 from django.http import HttpResponseServerError
-from django.shortcuts import render
+from django.shortcuts import render, redirect, reverse
 from .models import UserGroup
 from envelope.models import Envelope
+from question.models import Answer, BaseQuestion
 from itertools import chain
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -27,14 +28,36 @@ def envelope(request, envelope_id):
     try:
         user_group = UserGroup.objects.get(user=user, env_id=envelope_id)
         envelope = user_group.envelope
-        questions = get_envelope_questions(envelope)
+        questions = get_envelope_questions(envelope)['questions']
         context = {
             'envelope_id': envelope_id,
             'envelope': envelope,
             'user': user,
             'questions': questions,
         }
-        return render(request, 'envelope.html', context)
+        if request.method == 'POST' and envelope_member(user, envelope_id):
+            answers = get_envelope_questions(envelope)['answers']
+            for a in answers:
+              # answer name == question.id
+              user_answer = request.POST.get(a)
+              # if question was answered
+              if not user_answer.isspace():
+                  question = BaseQuestion.objects.get(id=a)
+                  answered = Answer.objects.filter(envelope=envelope, user=user, question=question).first()
+                  # if user has answered this question already
+                  if answered:
+                      # modify the question
+                      answered.user_answer = user_answer
+                      answered.save()
+                  else:
+                    # else create it 
+                    answer = Answer(user=request.user, question=question, user_answer=user_answer)
+                    answer.save()
+                    envelope.user_answers.add(answer)
+            messages.success(request, f"Saved answers for {envelope.envelope_name}.")
+            return redirect(reverse('board:board_home'))
+        else:
+            return render(request, 'envelope.html', context)
     except ObjectDoesNotExist:
         messages.success(request, "You do not have permission to view this page.")
         return render(request, 'home.html')
@@ -82,4 +105,16 @@ def get_envelope_questions(envelope):
     questions_admin = envelope.questions_admin.all()
     questions_user = envelope.questions_user.all()
     questions_default = envelope.questions_default.all()
-    return list(chain(questions_admin, questions_user, questions_default))
+    all_questions = list(chain(questions_admin, questions_user, questions_default))
+    question_ids = [ str(q.id) for q in all_questions ]
+    return { 'questions': all_questions, 'answers': question_ids }
+
+def envelope_member(user, envelope_id):
+    try:
+        UserGroup.objects.get(user=user, env_id=envelope_id)
+        return True
+    except ObjectDoesNotExist:
+        return False
+
+def update_answer(user, envelope, content):
+    answers_for_envelope = Answer.objects.filter(envelope=envelope, user=user)

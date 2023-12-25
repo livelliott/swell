@@ -10,9 +10,15 @@
     {% if envelope.envelope_admin == user %}
         <p>You are admin</p>
     {% endif %}
-    {% for question in questions %}
-        <p>{{ question.content }}</p>
-    {% endfor %}
+    <form method="post" action="">
+      {% csrf_token %}
+      {% for question in questions %}
+        <label for="{{ question.id }}">{{ question.content }}</label>
+        <input type="text" name="{{ question.id }}"><br>
+      {% endfor %}
+      <input type="submit" value="Save">
+      <a href="{% url 'board:board_home' %}"><button type="button">Exit</button></a>
+    </form>
   {% endblock %}
 </body>
 </html>
