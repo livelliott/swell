@@ -9,7 +9,6 @@ class Invitation(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_invitations')
     invite_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_invitations', editable=True, blank=True, null=True)
-    is_accepted = models.BooleanField(default=False)
 
 # represents a single user's relationship to a specific group
 # user in multiple groups >> multiple UserGroup instances

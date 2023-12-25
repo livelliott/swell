@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages 
 from django.urls import reverse
 from .forms import RegisterUserForm, AcceptInvite
@@ -73,14 +73,23 @@ def accept_invite(request, invite_token):
             current_user = request.user
             invite = get_object_or_404(Invitation, invite_token=invite_token)
             envelope = get_object_or_404(Envelope, envelope_id=invite.envelope_id)
-            # update invite status
-            invite.recipient = current_user
-            invite.email = current_user.email
-            invite.is_accepted = True
-            invite.save()
-            # create user group with form info
-            user_group = UserGroup(user=current_user, display_name=form.cleaned_data['display_name'], envelope=envelope, env_id=envelope.envelope_id)
-            user_group.save()
-            messages.success(request, f"Successfully joined group {envelope.envelope_name}!")
+            if joined_envelope(request.user, invite.envelope_id):
+                messages.success(request, f"Already joined {envelope.envelope_name}.")
+            else:
+                # update invite status
+                invite.recipient = current_user
+                invite.email = current_user.email
+                invite.delete()
+                # create user group with form info
+                user_group = UserGroup(user=current_user, display_name=form.cleaned_data['display_name'], envelope=envelope, env_id=envelope.envelope_id)
+                user_group.save()
+                messages.success(request, f"Successfully joined group {envelope.envelope_name}.")
             return redirect(reverse('board:board_home'))
     return render(request, 'registration/accept_invite.html', {'form': form, 'invite_token': invite_token})
+
+def joined_envelope(user, env_id):
+    try:
+        UserGroup.objects.get(user=user, env_id=env_id)
+        return True
+    except ObjectDoesNotExist:
+        return False
