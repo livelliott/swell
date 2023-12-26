@@ -7,18 +7,24 @@
 <body>
   {% block content %}
     <a href="/dashboard/envelope/{{ envelope.envelope_id }}/members">Members</a>
-    {% if envelope.envelope_admin == user %}
-        <p>You are admin</p>
-    {% endif %}
-    <form method="post" action="">
-      {% csrf_token %}
-      {% for question, prev_answer in prev_answers.items %}
-        <label for="{{ question.id }}">{{ question.content }}</label>
-        <input type="text" name="{{ question.id }}" value="{{ prev_answer }}"><br>
-      {% endfor %}
-      <input type="submit" value="Save">
+    {% if started %}
+      <form method="post" action="">
+        {% csrf_token %}
+        {% for question, prev_answer in prev_answers.items %}
+          <label for="{{ question.id }}">{{ question.content }}</label>
+          <input type="text" name="{{ question.id }}" value="{{ prev_answer }}"><br>
+        {% endfor %}
+        <input type="submit" value="Save">
+      </form>
+      {% else %}
+      <form method="post" action="">
+        {% csrf_token %}
+        <label for="user_question">Suggest a question/prompt for the next envelope:</label>
+        <input type="text" name="user_question">
+        <input type="submit" value="Save">
+      </form>
+      {% endif %}
       <a href="{% url 'board:board_home' %}"><button type="button">Exit</button></a>
-    </form>
   {% endblock %}
 </body>
 </html>

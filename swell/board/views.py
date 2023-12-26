@@ -2,12 +2,13 @@ from django.http import HttpResponseServerError
 from django.shortcuts import render, redirect, reverse
 from .models import UserGroup
 from envelope.models import Envelope
-from question.models import Answer, BaseQuestion
+from question.models import Answer, BaseQuestion, UserQuestion
 from itertools import chain
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from envelope.views import valid_invite, send_invite
+from django.utils import timezone
 
 @login_required
 def home_page(request):
@@ -31,32 +32,49 @@ def envelope(request, envelope_id):
         questions = get_envelope_questions(envelope)['questions']
         prev_answers = get_previous_answers(envelope, user, questions)
         answers = get_envelope_questions(envelope)['answers']
+        started = envelope_started(envelope)
         context = {
             'envelope_id': envelope_id,
             'envelope': envelope,
             'user': user,
             'prev_answers': prev_answers,
+            'started': started,
         }
         if request.method == 'POST' and envelope_member(user, envelope_id):
-            for a in answers:
-              # answer name == question.id
-              user_answer = request.POST.get(a)
-              # if question was answered
-              if not user_answer.isspace():
-                  question = BaseQuestion.objects.get(id=a)
-                  answered = Answer.objects.filter(envelope=envelope, user=user, question=question).first()
-                  # if user has answered this question already
-                  if answered:
-                      # modify the question
-                      answered.user_answer = user_answer
-                      answered.save()
-                  else:
-                    # else create it 
-                    answer = Answer(user=request.user, question=question, user_answer=user_answer)
-                    answer.save()
-                    envelope.user_answers.add(answer)
-            messages.success(request, f"Saved answers for {envelope.envelope_name}.")
-            return redirect(reverse('board:board_home'))
+            # if question period commenced
+            if started:
+                for a in answers:
+                    # answer name == question.id
+                    user_answer = request.POST.get(a)
+                    # if question was answered
+                    if not user_answer.isspace():
+                        question = BaseQuestion.objects.get(id=a)
+                        answered = Answer.objects.filter(envelope=envelope, user=user, question=question).first()
+                        # if user has answered this question already
+                        if answered:
+                            # modify the question
+                            answered.user_answer = user_answer
+                            answered.save()
+                        else:
+                            # else create it 
+                            answer = Answer(user=request.user, question=question, user_answer=user_answer)
+                            answer.save()
+                            envelope.user_answers.add(answer)
+                    messages.success(request, f"Saved answers for {envelope.envelope_name}.")
+                    return redirect(reverse('board:board_home'))
+            else:
+                # get user to suggest questions
+                if len(UserQuestion.objects.filter(user=user, envelope=envelope)) < 2:
+                    user_question = request.POST.get('user_question')
+                    question = UserQuestion(content=user_question, user=user)
+                    question.save()
+                    envelope.questions_user.add(question)
+                    envelope.save()
+                    messages.success(request, "Submitted.")
+                    return redirect(reverse('board:board_home'))
+                else:
+                    messages.success(request, "You may only submit two prompts per envelope.")
+                    return redirect(reverse('board:board_home'))
         else:
             return render(request, 'envelope.html', context)
     except ObjectDoesNotExist:
@@ -99,6 +117,14 @@ def get_joined_envelopes(request):
     for user_group in user_groups:
         joined_envelopes.append(user_group.envelope)
     return joined_envelopes
+
+def envelope_started(envelope):
+    today = timezone.localdate()
+    start_date = (envelope.envelope_query_date - today).days
+    if start_date > 0:
+        return False
+    else:
+        return True
 
 # retrieves all questions associated with envelope
 # @return [dictionary] - {all questions, corresponding ids}
