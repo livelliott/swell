@@ -11,8 +11,10 @@
       <form method="post" action="">
         {% csrf_token %}
         {% for question, prev_answer in prev_answers.items %}
-          <label for="{{ question.id }}">{{ question.content }}</label>
-          <input type="text" name="{{ question.id }}" value="{{ prev_answer }}"><br>
+          {% if question.is_enabled %}
+            <label for="{{ question.id }}">{{ question.content }}</label>
+            <input type="text" name="{{ question.id }}" value="{{ prev_answer }}"><br>
+          {% endif %}
         {% endfor %}
         <input type="submit" value="Save">
       </form>
