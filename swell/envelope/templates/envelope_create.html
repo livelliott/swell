@@ -11,13 +11,18 @@
       {% csrf_token %}
       <div class="container">
         <div class="main-title">Create Envelope</div>
+        {% if messages %}
+          {% for message in messages %}
+            <p  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
+          {% endfor %}
+        {% endif %}
         <div class="prompt-text">
           <label class="prompt" for="envelope_name">Choose an Envelope Name</label>
-          <input class="text-field" type="text" name="envelope_name" id="id_envelope_name" placeholder="Envelope Name">
+          <input required class="text-field" type="text" name="envelope_name" id="id_envelope_name" placeholder="Envelope Name">
         </div>
         <div class="prompt-text">
           <label class="prompt" for="admin_display_name">User Display Name</label>
-          <input class="text-field" type="text" name="admin_display_name" id="id_envelope_name" placeholder="Name">
+          <input required class="text-field" type="text" name="admin_display_name" id="id_envelope_name" placeholder="Name">
           <label class="sub-prompt" for="admin_display_name"><i>how your name appears to Envelope members</i></label>
         </div>
         <div class="prompt-text">

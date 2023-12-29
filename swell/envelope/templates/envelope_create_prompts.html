@@ -1,0 +1,74 @@
+{% block title %}
+  <title>Create Envelope Prompts</title>
+{% endblock %}
+
+{% block content %}
+<head>
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'forms.css' %}">
+</head>
+<script>
+  var checkedQuestionIds = [];
+
+  function toggleCheckboxes(questionId) {
+      // Toggle visibility by changing the 'display' property within the specific prompt-box
+      var promptBox = document.getElementById(questionId);
+      var unchecked = promptBox.querySelector('.unchecked');
+      var checked = promptBox.querySelector('.checked');
+
+      if (unchecked.style.display !== 'none') {
+          unchecked.style.display = 'none';
+          checked.style.display = 'block';
+
+          // Add the question ID to the list of checked IDs
+          checkedQuestionIds.push(questionId);
+      } else {
+          unchecked.style.display = 'block';
+          checked.style.display = 'none';
+
+          // Remove the question ID from the list of checked IDs
+          var index = checkedQuestionIds.indexOf(questionId);
+          if (index !== -1) {
+              checkedQuestionIds.splice(index, 1);
+          }
+      }
+  }
+
+  function onSubmit() {
+      // Set a hidden input field with the checked question IDs before submitting the form
+      document.getElementById('checkedQuestionIds').value = checkedQuestionIds.join(',');
+  }
+</script>
+
+<form method="post" action="" onsubmit="onSubmit()">
+    {% csrf_token %}
+    <div class="container">
+        <div class="header">
+            <div class="main-title">Customize Your Envelope</div>
+            <div class="sub-title">Add prompts to get the newsletter started:</div>
+        </div>
+        {% for question in questions %}
+            <div class="prompt-box" id="{{ question.id }}">
+                <svg class="unchecked" width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" onclick="toggleCheckboxes('{{ question.id }}')">
+                  <mask id="path-1-inside-1_84_71" fill="white"><rect width="19" height="19" rx="1.25"/></mask>
+                  <rect width="19" height="19" rx="1.25" fill="white" stroke="#8B8B8B" stroke-width="4" mask="url(#path-1-inside-1_84_71)"/>
+                </svg>
+                <svg class="checked" width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" onclick="toggleCheckboxes('{{ question.id }}')" style="display: none;">
+                  <mask id="path-1-inside-1_90_136" fill="white"><rect width="19" height="19" rx="1.25"/></mask>
+                  <rect width="19" height="19" rx="1.25" fill="white"/>
+                  <rect width="19" height="19" rx="1.25" fill="white"/>
+                  <rect width="19" height="19" rx="1.25" stroke="#538FE8" stroke-width="4" mask="url(#path-1-inside-1_90_136)"/>
+                  <rect x="4" y="4" width="11" height="11" rx="0.5" fill="#538FE8"/>
+                </svg>
+                <label id="{{ question.id }}">{{ question.content }}</label>
+            </div>
+        {% endfor %}
+        <!-- Hidden input field to store the checked question IDs -->
+        <input type="hidden" id="checkedQuestionIds" name="checked_question_ids" value="">
+        <div class="btns">
+            <a class="btn-cancel" href="{% url 'envelope:envelope_create' %}">Back</a>
+            <input class="btn-next" type="submit" value="Next">
+        </div>
+    </div>
+</form>
+{% endblock %}

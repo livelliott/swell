@@ -10,12 +10,12 @@
   --white: #ffffff;
   --black: #000; 
   --main-blue: #538FE8;
-  --hover-btn-blue: #81aef0;
+  --hover-btn-blue: #8fb9f9;
   --outline-grey: #d5d5d5;
   --hover-blue: #eff6ff;
   --bg-blue: #EEF4FD;
   --text-grey: #8e8e8e;
-  --btn-grey: #a8a8a8;
+  --btn-grey: #bcbcbc;
 }
 
 body {
@@ -102,7 +102,7 @@ select:focus {
 
 .btns {
     margin-top: 1em;
-    gap: 1em;
+    gap: 1.5em;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -144,4 +144,11 @@ select:focus {
 
 .btn-next:hover {
     background-color: var(--hover-btn-blue);
+}
+
+.prompt-box {
+    font-size: 1.1rem;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
 }

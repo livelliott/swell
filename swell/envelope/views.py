@@ -1,11 +1,13 @@
+from itertools import chain
 from django.urls import reverse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from board.models import Invitation, UserGroup
 from question.models import DefaultQuestion, AdminQuestion
 from django.contrib.auth.models import User
 from swell.constants import EMAIL_PATTERN
+from envelope.models import Envelope
 from .forms import EnvelopeForm
 from django.core.mail import send_mail
 from django.conf import settings
@@ -37,10 +39,29 @@ def envelope_create(request):
             user_group.save()
             # send invitation to envelope via email
             # invite_members(request, envelope_id, form.cleaned_data['members'])
-            return redirect(reverse('envelope:envelope_create_success'))
+            return redirect('envelope:envelope_create_prompts', envelope_id=envelope_form.envelope_id)
     else:
         form = EnvelopeForm()
     return render(request, 'envelope_create.html', {'form': form})
+
+def envelope_create_prompts(request, envelope_id):
+    envelope = get_object_or_404(Envelope, envelope_id=envelope_id)
+    questions = get_envelope_questions(envelope)['questions']
+    context = {
+        'envelope': envelope,
+        'questions': questions,
+    }
+    return render(request, 'envelope_create_prompts.html', context)
+
+# retrieves all questions associated with envelope
+# @return [dictionary] - {all questions, corresponding ids}
+def get_envelope_questions(envelope):
+    questions_admin = envelope.questions_admin.all()
+    questions_user = envelope.questions_user.all()
+    questions_default = envelope.questions_default.all()
+    all_questions = list(chain(questions_admin, questions_user, questions_default))
+    question_ids = [ str(q.id) for q in all_questions ]
+    return { 'questions': all_questions, 'answers': question_ids }
 
 # displays envelope creation success screen
 @login_required
