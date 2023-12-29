@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 # Admin decides if questions are included in the newsletter
 class BaseQuestion(models.Model):
     content = models.CharField(max_length=400)
-    is_enabled = models.BooleanField(default=True)
+    is_enabled = models.BooleanField(default=False)
 
 class DefaultQuestion(BaseQuestion):
     pass

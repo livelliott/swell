@@ -11,6 +11,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
 from datetime import timedelta
+from django.utils import timezone
 import re
 import os
 
@@ -24,9 +25,9 @@ def envelope_create(request):
             envelope_form = form.save(commit=False)
             # retrieve info from the form
             admin_display_name = form.cleaned_data['admin_display_name']
-            envelope_query_date = form.cleaned_data['envelope_query_date']
             envelope_frequency = int(form.cleaned_data['envelope_frequency'])
             envelope_form.envelope_admin = request.user
+            envelope_query_date = (timezone.now() + timezone.timedelta(days=2)).astimezone(timezone.get_current_timezone()).date()
             envelope_form.envelope_due_date = (envelope_query_date + timedelta(days=envelope_frequency)).strftime("%Y-%m-%d")
             envelope_form.save()
             default_questions(envelope_form)
@@ -35,7 +36,7 @@ def envelope_create(request):
             user_group = UserGroup(user=request.user, display_name=admin_display_name, envelope=envelope_form, env_id=envelope_id)
             user_group.save()
             # send invitation to envelope via email
-            invite_members(request, envelope_id, form.cleaned_data['members'])
+            # invite_members(request, envelope_id, form.cleaned_data['members'])
             return redirect(reverse('envelope:envelope_create_success'))
     else:
         form = EnvelopeForm()

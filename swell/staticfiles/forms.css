@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@300;400;600&family=Yeseva+One&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --white: #ffffff;
+  --black: #000; 
+  --main-blue: #538FE8;
+  --hover-btn-blue: #81aef0;
+  --outline-grey: #d5d5d5;
+  --hover-blue: #eff6ff;
+  --bg-blue: #EEF4FD;
+  --text-grey: #8e8e8e;
+  --btn-grey: #a8a8a8;
+}
+
+body {
+    font-family: 'Karla', sans-serif;
+    background-color: var(--bg-blue);
+    width: 60%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid var(--outline-grey);
+  }
+
+body:hover * {
+    transition: all 0.3s cubic-bezier(.68,0,.68,.86);
+}
+
+.container {
+    background-color: var(--white);
+    padding: 5em 6em;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8em;
+}
+
+.main-title {
+    font-size: 2.3rem;
+    font-family:  'Yeseva One', serif;
+}
+
+.prompt-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.2em;
+}
+
+.prompt {
+    font-weight: bold;
+    margin-bottom: 0.7em;
+}
+
+.text-field {
+    padding: 0.8em;
+    border-radius: 0.2em;
+    border: 0.12em solid var(--outline-grey);
+    font-family: 'Karla', sans-serif;
+    font-size: 1rem;
+    color: var(--text-grey);
+}
+
+.text-field:focus {
+    border: 0.12em solid var(--main-blue);
+    outline: none;  
+}
+
+.sub-prompt {
+    font-size: 1rem;
+    color: var(--text-grey);
+    margin-top: 0.5em;
+    font-weight: 100;
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 0.8em;
+    border-radius: 0.2em;
+    border: 0.12em solid var(--outline-grey);
+    font-family: 'Karla', sans-serif;
+    font-size: 1rem;
+    color: var(--text-grey)
+}
+
+select:hover {
+    cursor: pointer;
+}
+
+select:focus {
+    border: 0.12em solid var(--main-blue);
+    outline: none;
+    
+}
+
+.btns {
+    margin-top: 1em;
+    gap: 1em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.btn-cancel {
+    background-color: var(--white);
+    border: 0.12rem solid var(--black);
+    font-size: 1.1rem;
+    color: var(--black);
+    width: 100%;
+    padding: 0.7em 2em;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 0.2em;
+}
+
+.btn-next {
+    font-family: 'Karla', sans-serif;
+    width: 100%;
+    font-weight: bold;
+    background-color: var(--main-blue);
+    font-size: 1.1rem;
+    color: var(--white);
+    width: 100%;
+    padding: 0.7em 2em;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 0.2em;
+    border: none;
+    outline: none;
+}
+
+.btn-cancel:hover {
+    background-color: var(--btn-grey);
+    border: 0.12rem solid var(--btn-grey);
+    color: var(--white);
+}
+
+.btn-next:hover {
+    background-color: var(--hover-btn-blue);
+}

@@ -10,10 +10,10 @@
   </head>
   <div class="nav-container">
     <nav class="nav-bar">
-      <svg id="logo" height="2.8rem" viewBox="0 0 172 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <text fill="black" xml:space="preserve" style="white-space: pre" font-family="Yeseva One" font-size="40" letter-spacing="0em"><tspan x="0" y="36.5">SOWELL</tspan></text>
-          <circle cx="167" cy="9" r="5" fill="#FF2D8E"/>
-      </svg>
+      <svg width="146" height="46" viewBox="0 0 146 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text fill="black" xml:space="preserve" style="white-space: pre" font-family="Yeseva One" font-size="40" letter-spacing="0em"><tspan x="0" y="36.5">SoWell</tspan></text>
+        <circle cx="141" cy="7.5" r="5" fill="#148EFF"/>
+    </svg>
       <div class="profile-info">
         <svg id="profile-icon" height="2em" viewBox="0 0 33 31" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M16.0417 13.7501C14.151 13.7501 12.5326 13.0769 11.1862 11.7305C9.83984 10.3842 9.16667 8.76568 9.16667 6.87506C9.16667 4.9844 9.83984 3.36589 11.1862 2.01953C12.5326 0.673177 14.151 0 16.0417 0C17.9323 0 19.5508 0.673177 20.8971 2.01953C22.2435 3.36589 22.9167 4.9844 22.9167 6.87506C22.9167 8.76568 22.2435 10.3842 20.8971 11.7305C19.5508 13.0769 17.9323 13.7501 16.0417 13.7501ZM0 30.3206V26.5481C0 25.6021 0.275439 24.717 0.826318 23.8929C1.3772 23.0687 2.11832 22.429 3.04969 21.9736C5.21207 20.9365 7.37592 20.1586 9.54124 19.64C11.7066 19.1215 13.8734 18.8622 16.0417 18.8622C18.2099 18.8622 20.3767 19.1215 22.5421 19.64C24.7074 20.1586 26.8713 20.9365 29.0336 21.9736C29.965 22.429 30.7061 23.0687 31.257 23.8929C31.8079 24.717 32.0833 25.6021 32.0833 26.5481V30.3206H0ZM2.29167 28.0289H29.7917V26.5481C29.7917 26.0398 29.6279 25.5624 29.3003 25.1158C28.9727 24.6692 28.5195 24.2917 27.9407 23.9832C26.0545 23.0695 24.1097 22.3695 22.1063 21.8832C20.103 21.397 18.0814 21.1539 16.0417 21.1539C14.0019 21.1539 11.9803 21.397 9.977 21.8832C7.97363 22.3695 6.02884 23.0695 4.14265 23.9832C3.56385 24.2917 3.11065 24.6692 2.78306 25.1158C2.45546 25.5624 2.29167 26.0398 2.29167 26.5481V28.0289ZM16.0417 11.4584C17.3021 11.4584 18.3811 11.0096 19.2786 10.112C20.1762 9.21447 20.625 8.13548 20.625 6.87506C20.625 5.61464 20.1762 4.53565 19.2786 3.63808C18.3811 2.74051 17.3021 2.29173 16.0417 2.29173C14.7812 2.29173 13.7023 2.74051 12.8047 3.63808C11.9071 4.53565 11.4583 5.61464 11.4583 6.87506C11.4583 8.13548 11.9071 9.21447 12.8047 10.112C13.7023 11.0096 14.7812 11.4584 16.0417 11.4584Z" fill="#1C1B1F"/>
@@ -42,12 +42,11 @@
           {% for envelope in all_envelopes %}
             <a class="envelope" href="/dashboard/envelope/{{ envelope.envelope_id }}">
               <div class="env-tile">
-                <svg width="290" height="131" viewBox="0 0 290 131" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="1" y="1.5" width="288" height="129" rx="1" stroke="black" stroke-width="2"/>
-                  <path d="M1 130.25L121.5 76" stroke="black" stroke-width="2"/>
-                  <path d="M289 130.25L167.5 76.5" stroke="black" stroke-width="2"/>
-                  <path d="M2.5 1.5L145 91L288.5 2" stroke="black" stroke-width="2"/>
-                </svg>
+                <svg width="276" height="126" viewBox="0 0 276 126" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="275.745" height="125.426" rx="2.5" fill="#DEDEDE"/>
+                  <path d="M137.647 42.234L4.89362 125.234H270.894L137.647 42.234Z" fill="#CCCCCC"/>
+                  <path d="M137.249 83L2 0H273L137.249 83Z" fill="#F0F0F0"/>
+                </svg>                         
                 <div class="env-title">{{ envelope.envelope_name }}</div>
                 <div class="env-due-date">{{ envelope.delivery_date }}</div>
               </div>
@@ -55,11 +54,10 @@
           {% endfor %}
           <div class="create-envelope">
               <a href="{% url 'envelope:envelope_create' %}" class="create-envelope-container">
-                <svg id="create-envelope" width="290" height="131" viewBox="0 0 290 131" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="1" y="1" width="288" height="129" rx="1.5" stroke="black" stroke-width="2" stroke-dasharray="5 5"/>
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M159 65.5C159 73.5081 152.508 80 144.5 80C136.492 80 130 73.5081 130 65.5C130 57.4919 136.492 51 144.5 51C152.508 51 159 57.4919 159 65.5ZM161 65.5C161 74.6127 153.613 82 144.5 82C135.387 82 128 74.6127 128 65.5C128 56.3873 135.387 49 144.5 49C153.613 49 161 56.3873 161 65.5ZM146 59V65H152V67H146V73H144V67H138V65H144V59H146Z" fill="black"/>
-                  </svg>
-                  
+                <svg id="create-envelope" width="276" height="125" viewBox="0 0 276 125" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="1" y="1" width="273.638" height="123" rx="1.5" stroke="#BCBCBC" stroke-width="2" stroke-dasharray="5 5"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M151.366 61.7443C151.366 69.3424 145.232 75.4886 137.683 75.4886C130.133 75.4886 124 69.3424 124 61.7443C124 54.1461 130.133 48 137.683 48C145.232 48 151.366 54.1461 151.366 61.7443ZM153.366 61.7443C153.366 70.4396 146.344 77.4886 137.683 77.4886C129.021 77.4886 122 70.4396 122 61.7443C122 53.049 129.021 46 137.683 46C146.344 46 153.366 53.049 153.366 61.7443ZM139.158 55.542V61.2214H144.812V63.2214H139.158V68.9008H137.158V63.2214H131.505V61.2214H137.158V55.542H139.158Z" fill="#BCBCBC"/>
+                </svg>
               </a>
             </div>
         </div>

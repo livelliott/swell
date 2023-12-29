@@ -1,12 +1,33 @@
 {% block title %}
-  <title>Your Form</title>
+  <title>Create Envelope</title>
 {% endblock %}
 
 {% block content %}
-    <form method="post" action="">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Create Envelope">
-    </form>
-    <a href="{% url 'board:board_home' %}"><button type="button">Exit</button></a>
+<head>
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'forms.css' %}">
+</head>
+  <form method="post" action="">
+      {% csrf_token %}
+      <div class="container">
+        <div class="main-title">Create Envelope</div>
+        <div class="prompt-text">
+          <label class="prompt" for="envelope_name">Choose an Envelope Name</label>
+          <input class="text-field" type="text" name="envelope_name" id="id_envelope_name" placeholder="Envelope Name">
+        </div>
+        <div class="prompt-text">
+          <label class="prompt" for="admin_display_name">User Display Name</label>
+          <input class="text-field" type="text" name="admin_display_name" id="id_envelope_name" placeholder="Name">
+          <label class="sub-prompt" for="admin_display_name"><i>how your name appears to Envelope members</i></label>
+        </div>
+        <div class="prompt-text">
+          <label class="prompt" for="envelope_frequency">Envelope Frequency</label>
+          {{ form.envelope_frequency }}
+        </div>
+        <div class="btns">
+          <a class="btn-cancel" href="{% url 'board:board_home' %}">Cancel</a>
+          <input class="btn-next" type="submit" value="Next">
+        </div>
+      </div>
+  </form>
 {% endblock %}
