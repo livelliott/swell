@@ -1,4 +1,8 @@
+from django.core.serializers.json import DjangoJSONEncoder
 from itertools import chain
+from django.forms import model_to_dict
+from datetime import date
+import json
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
@@ -25,32 +29,49 @@ def envelope_create(request):
         form = EnvelopeForm(request.POST)
         if form.is_valid():
             envelope_form = form.save(commit=False)
-            # retrieve info from the form
-            admin_display_name = form.cleaned_data['admin_display_name']
-            envelope_frequency = int(form.cleaned_data['envelope_frequency'])
-            envelope_form.envelope_admin = request.user
-            envelope_query_date = (timezone.now() + timezone.timedelta(days=2)).astimezone(timezone.get_current_timezone()).date()
-            envelope_form.envelope_due_date = (envelope_query_date + timedelta(days=envelope_frequency)).strftime("%Y-%m-%d")
-            envelope_form.save()
-            default_questions(envelope_form)
-            # create corresponding user group instance
-            envelope_id = envelope_form.envelope_id
-            user_group = UserGroup(user=request.user, display_name=admin_display_name, envelope=envelope_form, env_id=envelope_id)
-            user_group.save()
-            # send invitation to envelope via email
-            # invite_members(request, envelope_id, form.cleaned_data['members'])
-            return redirect('envelope:envelope_create_prompts', envelope_id=envelope_form.envelope_id)
+            # save form data in session
+            request.session['envelope_data'] = json.dumps(model_to_dict(envelope_form), cls=CustomJSONEncoder)
+            return redirect('envelope:envelope_create_prompts')
     else:
         form = EnvelopeForm()
     return render(request, 'envelope_create.html', {'form': form})
 
-def envelope_create_prompts(request, envelope_id):
-    envelope = get_object_or_404(Envelope, envelope_id=envelope_id)
-    questions = get_envelope_questions(envelope)['questions']
+def envelope_create_prompts(request):
+    # retrieve saved form data from session
+    envelope_data = request.session.get('envelope_data')
+    if not envelope_data:
+        # redirect back to the first page if session data is missing
+        messages.error(request, 'Please complete the previous step.')
+        return redirect('envelope:envelope_create')
+
+    all_default_questions = DefaultQuestion.objects.all()
+    envelope_query_date = (timezone.now() + timezone.timedelta(days=2)).astimezone(timezone.get_current_timezone()).date()
     context = {
-        'envelope': envelope,
-        'questions': questions,
+        'questions': all_default_questions,
     }
+
+    if request.method == "POST":
+        data = json.loads(envelope_data)
+        envelope_frequency = data['envelope_frequency']
+        questions_str = request.POST.get('checked_question_ids')
+        questions = [int(q) for q in questions_str.split(',') if q.isdigit()]
+        # Print or log form data for verification
+        print(f"Envelope Data: {data}")
+        print(f"Envelope Frequency: {envelope_frequency}")
+        print(f"Questions: {questions}")
+
+        # Convert envelope_data back to a dictionary
+        envelope = Envelope(
+            envelope_name=data['envelope_name'],
+            envelope_admin=request.user,
+            envelope_frequency=envelope_frequency,
+            envelope_due_date=(envelope_query_date + timedelta(days=envelope_frequency)).strftime("%Y-%m-%d")
+        )
+        envelope.save()
+        default_questions(envelope, questions)
+        messages.success(request, f"{questions}.")
+        return redirect('envelope:envelope_create_success')
+
     return render(request, 'envelope_create_prompts.html', context)
 
 # retrieves all questions associated with envelope
@@ -70,9 +91,9 @@ def envelope_create_success(request):
 
 # adds all default questions to envelope
 # can be disabled by admin
-def default_questions(envelope):
-    all_default_questions = DefaultQuestion.objects.all()
-    for question in all_default_questions:
+def default_questions(envelope, questions):
+    for question_id in questions:
+        question = DefaultQuestion.objects.get(id=question_id)
         envelope.questions_default.add(question)
     envelope.save()
 
@@ -118,3 +139,9 @@ def send_invite(request, envelope_id, email):
               from_email=settings.EMAIL_HOST_USER,
               recipient_list=[email],
               html_message=None)
+    
+class CustomJSONEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, date):
+            return obj.isoformat()
+        return super().default(obj)
