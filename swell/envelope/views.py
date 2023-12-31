@@ -30,48 +30,49 @@ def envelope_create(request):
         if form.is_valid():
             envelope_form = form.save(commit=False)
             # save form data in session
+            admin_display_name = request.POST.get('admin_display_name')
+            request.session['display_name'] = admin_display_name
             request.session['envelope_data'] = json.dumps(model_to_dict(envelope_form), cls=CustomJSONEncoder)
             return redirect('envelope:envelope_create_prompts')
     else:
         form = EnvelopeForm()
     return render(request, 'envelope_create.html', {'form': form})
 
+@login_required
 def envelope_create_prompts(request):
     # retrieve saved form data from session
     envelope_data = request.session.get('envelope_data')
+    display_name = request.session.get('admin_display_name')
     if not envelope_data:
         # redirect back to the first page if session data is missing
         messages.error(request, 'Please complete the previous step.')
         return redirect('envelope:envelope_create')
-
     all_default_questions = DefaultQuestion.objects.all()
     envelope_query_date = (timezone.now() + timezone.timedelta(days=2)).astimezone(timezone.get_current_timezone()).date()
     context = {
         'questions': all_default_questions,
     }
-
+    # if user clicks next
     if request.method == "POST":
+        # retrieve data from current and previous page
         data = json.loads(envelope_data)
+        print(data)
         envelope_frequency = data['envelope_frequency']
         questions_str = request.POST.get('checked_question_ids')
         questions = [int(q) for q in questions_str.split(',') if q.isdigit()]
-        # Print or log form data for verification
-        print(f"Envelope Data: {data}")
-        print(f"Envelope Frequency: {envelope_frequency}")
-        print(f"Questions: {questions}")
-
-        # Convert envelope_data back to a dictionary
+        # create envelope instance
         envelope = Envelope(
             envelope_name=data['envelope_name'],
             envelope_admin=request.user,
             envelope_frequency=envelope_frequency,
-            envelope_due_date=(envelope_query_date + timedelta(days=envelope_frequency)).strftime("%Y-%m-%d")
-        )
+            envelope_due_date=(envelope_query_date + timedelta(days=envelope_frequency)).strftime("%Y-%m-%d"))
         envelope.save()
         default_questions(envelope, questions)
+        # create corresponding user group for admin
+        user_group = UserGroup(user=request.user, display_name=display_name, envelope=envelope, env_id=envelope.envelope_id)
+        user_group.save()
         messages.success(request, f"{questions}.")
         return redirect('envelope:envelope_create_success')
-
     return render(request, 'envelope_create_prompts.html', context)
 
 # retrieves all questions associated with envelope

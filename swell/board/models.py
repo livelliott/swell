@@ -15,6 +15,5 @@ class Invitation(models.Model):
 class UserGroup(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     display_name = models.CharField(max_length=50, default=None, null=True)
-    # invitation associated with the user and group
     envelope = models.ForeignKey('envelope.Envelope', on_delete=models.CASCADE)
     env_id = models.IntegerField()

@@ -26,11 +26,10 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 1px solid var(--outline-grey);
   }
 
 body:hover * {
-    transition: all 0.3s cubic-bezier(.68,0,.68,.86);
+    transition: all 0.2s cubic-bezier(.68,0,.68,.86);
 }
 
 .container {
@@ -39,6 +38,19 @@ body:hover * {
     display: flex;
     flex-direction: column;
     gap: 1.8em;
+    border: 1px solid var(--outline-grey);
+}
+
+.container-sml {
+    background-color: var(--white);
+    border: 0.12em solid var(--outline-grey);
+    display: flex;
+    flex-direction: column;
+    padding: 2em 2em;
+}
+
+.customize-envelope {
+    z-index: -1;
 }
 
 .main-title {
@@ -76,6 +88,11 @@ body:hover * {
     color: var(--text-grey);
     margin-top: 0.5em;
     font-weight: 100;
+    margin-bottom: 1em;
+}
+
+.sub-title {
+    margin-top: 0.8em;
 }
 
 select {
@@ -118,6 +135,7 @@ select:focus {
     text-align: center;
     text-decoration: none;
     border-radius: 0.2em;
+    cursor: pointer;
 }
 
 .btn-next {
@@ -151,4 +169,40 @@ select:focus {
     display: flex;
     flex-direction: row;
     gap: 1rem;
+}
+
+.custom-prompt {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: var(--main-blue);
+    font-weight: bold;
+    font-size: 1.3rem;
+    gap: 0.4em;
+    cursor: pointer;
+}
+
+.custom-title {
+    padding-bottom: 0.6em;
+}
+
+#plus {
+    fill: var(--main-blue);
+}
+
+.custom-prompt:hover {
+    color: var(--hover-btn-blue);
+}
+
+.custom-prompt:hover #plus {
+    fill: var(--hover-btn-blue);
+}
+
+.add-custom-prompt {
+    z-index: 100;
+    position: fixed;
+    top: 20%;
+    left: 20%;
+    width: 60%;
+    height: 45%;
 }
