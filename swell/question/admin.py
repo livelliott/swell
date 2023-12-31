@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import BaseQuestion, DefaultQuestion, AdminQuestion, UserQuestion, Answer
+from .models import BaseQuestion, DefaultQuestion, UserQuestion, Answer
 
 @admin.register(BaseQuestion)
 class BaseQuestionAdmin(admin.ModelAdmin):
@@ -8,11 +8,6 @@ class BaseQuestionAdmin(admin.ModelAdmin):
 @admin.register(DefaultQuestion)
 class DefaultQuestionAdmin(admin.ModelAdmin):
     list_display = ('content', 'is_enabled')
-
-@admin.register(AdminQuestion)
-class AdminQuestionAdmin(admin.ModelAdmin):
-    list_display = ('content', 'is_enabled')
-
 @admin.register(UserQuestion)
 class UserQuestionAdmin(admin.ModelAdmin):
     list_display = ('content', 'user', 'is_enabled')

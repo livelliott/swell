@@ -9,9 +9,6 @@ class BaseQuestion(models.Model):
 class DefaultQuestion(BaseQuestion):
     pass
 
-class AdminQuestion(BaseQuestion):
-    pass
-
 class UserQuestion(BaseQuestion):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 

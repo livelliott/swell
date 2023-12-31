@@ -26,13 +26,15 @@
         var index = checkedQuestionIds.indexOf(parseInt(questionId, 10));
         if (index !== -1) {
             checkedQuestionIds.splice(index, 1);
-        }
       }
     }
+  }
   function onSubmit() {
     console.log(checkedQuestionIds);
     sessionStorage.setItem('checkedQuestionIds', JSON.stringify(checkedQuestionIds));
+    sessionStorage.setItem('adminCustomQuestions', JSON.stringify(adminCustomQuestions));
     document.getElementById('checkedQuestionIdsInput').value = checkedQuestionIds;
+    document.getElementById('customPromptsInput').value = adminCustomQuestions;
   }
   function showCustomPrompt() {
     var addCustomPrompt = document.getElementById('custom-prompt-display');
@@ -43,10 +45,22 @@
   function hideCustomPrompt() {
     var addCustomPrompt = document.getElementById('custom-prompt-display');
     var background = document.getElementById('background');
+    document.getElementById('user_custom_prompt').value = ''
     addCustomPrompt.style.opacity = 0;
     background.style.filter = 'blur(0)';
   }
-
+  // adds custom prompt to envelope and displays success message
+  function addCustomAdminPrompt() {
+    var prompt = document.getElementById('user_custom_prompt').value;
+    var addedPromptSuccess = document.getElementById("added-prompt");
+    // display success indicator
+    if (prompt != '') {
+      adminCustomQuestions.push(prompt)
+      addedPromptSuccess.innerHTML = "Added: " + prompt
+      addedPromptSuccess.style.display = 'block';
+      hideCustomPrompt()
+    }
+  }
 </script>
 <div class="background" id="background">
   <form method="post" action="" onsubmit="onSubmit()">
@@ -55,8 +69,9 @@
     <div class="container" id="customize">
         <div class="header">
           <div class="main-title">Customize Your Envelope</div>
-          <div class="sub-title">Add prompts to get the newsletter started:</div>
+          <div class="sub-title">Choose prompts to get the Envelope started! You can add, delete, and modify prompts until next {{ edit_day }}.</div>
       </div>
+      <div class="success-box" id="added-prompt" style="display: none;"></div>
       {% if messages %}
         {% for message in messages %}
           <p  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
@@ -85,8 +100,8 @@
         </svg>
         <p>Add custom prompt</p>
       </div>
-      <!-- Hidden input field to store the checked question IDs -->
       <input type="hidden" id="checkedQuestionIdsInput" name="checked_question_ids" value="">
+      <input type="hidden" id="customPromptsInput" name="custom_prompts_input" value="">
       <div class="btns">
           <a class="btn-cancel" href="{% url 'envelope:envelope_create' %}">Back</a>
           <input class="btn-next" type="submit" value="Next">
@@ -105,7 +120,7 @@
     <label class="sub-prompt" for="user_custom_prompt"><i>Your display name will be visible with this prompt.</i></label>
     <div class="btns">
       <a class="btn-cancel" id="cancel-prompt" onclick="hideCustomPrompt()">Cancel</a>
-      <a class="btn-next" type="submit">Create</a>
+      <a class="btn-next" onclick="addCustomAdminPrompt()" type="submit">Create</a>
     </div>
   </div>
 </div>

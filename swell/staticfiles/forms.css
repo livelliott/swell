@@ -16,12 +16,14 @@
   --bg-blue: #EEF4FD;
   --text-grey: #8e8e8e;
   --btn-grey: #bcbcbc;
+  --outline-green: #9CD29D;
+  --main-green: #d6edd6;
 }
 
 body {
     font-family: 'Karla', sans-serif;
     background-color: var(--bg-blue);
-    width: 60%;
+    width: 65%;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -38,7 +40,7 @@ body:hover * {
     display: flex;
     flex-direction: column;
     gap: 1.8em;
-    border: 1px solid var(--outline-grey);
+    border: 0.12em solid var(--outline-grey);
 }
 
 .container-sml {
@@ -205,4 +207,11 @@ select:focus {
     left: 20%;
     width: 60%;
     height: 45%;
+}
+
+.success-box {
+    background-color: var(--main-green);
+    border: 0.12em solid var(--outline-green);
+    padding: 1em;
+    font-style: italic;
 }
