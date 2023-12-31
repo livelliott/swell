@@ -74,7 +74,7 @@
       <div class="success-box" id="added-prompt" style="display: none;"></div>
       {% if messages %}
         {% for message in messages %}
-          <p  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
+          <p class="success-box" {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
         {% endfor %}
       {% endif %}
       {% for question in questions %}

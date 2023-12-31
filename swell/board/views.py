@@ -129,10 +129,9 @@ def envelope_started(envelope):
 # retrieves all questions associated with envelope
 # @return [dictionary] - {all questions, corresponding ids}
 def get_envelope_questions(envelope):
-    questions_admin = envelope.questions_admin.all()
     questions_user = envelope.questions_user.all()
     questions_default = envelope.questions_default.all()
-    all_questions = list(chain(questions_admin, questions_user, questions_default))
+    all_questions = list(chain(questions_user, questions_default))
     question_ids = [ str(q.id) for q in all_questions ]
     return { 'questions': all_questions, 'answers': question_ids }
 

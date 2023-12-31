@@ -1,0 +1,31 @@
+{% block title %}
+  <title>SoWell: Send Invites</title>
+{% endblock %}
+
+{% block content %}
+<head>
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'forms.css' %}">
+</head>
+  <form method="post" action="">
+      {% csrf_token %}
+      <div class="container">
+        <div class="main-title">Invite Members to {{ envelope.envelope_name }}</div>
+          <div class="sub-title">It’s recommended to invite 3 to 10 people.</div>
+          {% if messages %}
+            {% for message in messages %}
+              <p class="success-box" {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
+            {% endfor %}
+          {% endif %}
+          <form method="post" action="">
+            <div class="prompt-text">
+              <input required class="text-field" type="text" name="user_email" id="user_email" placeholder="Email">
+            </div>
+            <div class="btns">
+              <a class="btn-cancel" href="{% url 'board:board_home' %}">Return to Home</a>
+              <input class="btn-next" type="submit" value="Send Invite">
+            </div>
+          </form>
+      </div>
+  </form>
+{% endblock %}

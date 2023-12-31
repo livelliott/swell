@@ -1,23 +1,20 @@
 from django.core.serializers.json import DjangoJSONEncoder
 from itertools import chain
 from django.forms import model_to_dict
-from datetime import date
-import json
-from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from board.models import Invitation, UserGroup
-from question.models import DefaultQuestion, UserQuestion
 from django.contrib.auth.models import User
-from swell.constants import EMAIL_PATTERN
+from question.models import DefaultQuestion, UserQuestion
+from board.models import Invitation, UserGroup
 from envelope.models import Envelope
 from .forms import EnvelopeForm
+from swell.constants import EMAIL_PATTERN
 from django.core.mail import send_mail
+from django.utils import timezone
 from django.conf import settings
-from django.utils import timezone
-from datetime import timedelta
-from django.utils import timezone
+from datetime import timedelta, date
+import json
 import re
 import os
 
@@ -57,39 +54,62 @@ def envelope_create_prompts(request):
     }
     # if user clicks next
     if request.method == "POST":
-        # retrieve data from current and previous page
-        data = json.loads(envelope_data)
-        envelope_frequency = data['envelope_frequency']
         # get default questions that admin enables
         questions_str = request.POST.get('checked_question_ids')
         questions = [int(q) for q in questions_str.split(',') if q.isdigit()]
         # get custom prompts the admin created
         custom_prompts = request.POST.get('custom_prompts_input')
-        prompts = [prompt for prompt in custom_prompts.split(',')]
-        # create envelope instance
-        envelope = Envelope(
-            envelope_name=data['envelope_name'],
-            envelope_admin=request.user,
-            envelope_frequency=envelope_frequency,
-            envelope_due_date=(envelope_query_date + timedelta(days=envelope_frequency)).strftime("%Y-%m-%d"))
-        envelope.save()
-        # add default + custom questions to envelope
-        default_questions(envelope, questions)
-        user_questions(envelope, request.user, prompts)
-        # create corresponding user group for admin
-        user_group = UserGroup(user=request.user, display_name=display_name, envelope=envelope, env_id=envelope.envelope_id)
-        user_group.save()
-        messages.success(request, f"Successfully added prompts to Envelope.")
-        return redirect('envelope:envelope_create_success')
+        if custom_prompts == '' :  prompts = [] 
+        else : prompts = [prompt for prompt in custom_prompts.split(',')]
+        # if no prompts have been added to the envelope
+        if len(questions) > 0 or len(prompts) > 0:
+            # retrieve data from current and previous page
+            data = json.loads(envelope_data)
+            envelope_frequency = data['envelope_frequency']
+            # create envelope instance
+            envelope = Envelope(
+                envelope_name=data['envelope_name'],
+                envelope_admin=request.user,
+                envelope_frequency=envelope_frequency,
+                envelope_due_date=(envelope_query_date + timedelta(days=envelope_frequency)).strftime("%Y-%m-%d"))
+            envelope.save()
+            # add default + custom questions to envelope
+            default_questions(envelope, questions)
+            user_questions(envelope, request.user, prompts)
+            # create corresponding user group for admin
+            user_group = UserGroup(user=request.user, display_name=display_name, envelope=envelope, env_id=envelope.envelope_id)
+            user_group.save()
+            request.session['envelope_id'] = str(envelope.envelope_id)
+            messages.success(request, f"Successfully added prompts to Envelope.")
+            return redirect('envelope:envelope_create_invite')
+        else:
+            messages.success(request, f"You need at least one prompt in your Envelope.")
+            return redirect('envelope:envelope_create_prompts')
     return render(request, 'envelope_create_prompts.html', context)
+
+@login_required
+def envelope_create_invite(request):
+    envelope_data = request.session.get('envelope_id')
+    envelope_id = json.loads(envelope_data)
+    envelope = get_object_or_404(Envelope, envelope_id=int(envelope_id))
+    context = {
+        'envelope': envelope,
+    }
+    if request.method == 'POST' and request.user == envelope.envelope_admin:
+        # allow admin to invite users to the envelope
+        invite_email = request.POST.get('user_email')
+        if valid_invite(invite_email) != None:
+            send_invite(request, envelope_id, invite_email)
+            messages.success(request, f"Invite sent to {invite_email}.")       
+            return render(request, 'envelope_create_invite.html', context)
+    return render(request, 'envelope_create_invite.html', context)
 
 # retrieves all questions associated with envelope
 # @return [dictionary] - {all questions, corresponding ids}
 def get_envelope_questions(envelope):
-    questions_admin = envelope.questions_admin.all()
     questions_user = envelope.questions_user.all()
     questions_default = envelope.questions_default.all()
-    all_questions = list(chain(questions_admin, questions_user, questions_default))
+    all_questions = list(chain(questions_user, questions_default))
     question_ids = [ str(q.id) for q in all_questions ]
     return { 'questions': all_questions, 'answers': question_ids }
 
@@ -108,11 +128,12 @@ def default_questions(envelope, questions):
 
 # creates user questions + adds to envelope
 def user_questions(envelope, user, prompts):
-    for prompt in prompts:
-       create_prompt = UserQuestion(content=prompt, user=user, is_enabled=True)
-       create_prompt.save()
-       envelope.questions_user.add(create_prompt)
-    envelope.save()
+    if len(prompts) > 0:
+        for prompt in prompts:
+            create_prompt = UserQuestion(content=prompt, user=user, is_enabled=True)
+            create_prompt.save()
+            envelope.questions_user.add(create_prompt)
+            envelope.save()
 
 # checks if string is a valid email/username
 # @return valid email address
@@ -140,8 +161,6 @@ def invite_members(request, envelope_id, members):
             messages.success(request, "Invite sent to " + user_email)
         else:
             messages.success(request, "ERROR")
-        pass
-    pass
 
 # sends email invite with custom link
 # @redirect - none

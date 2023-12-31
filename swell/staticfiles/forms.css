@@ -163,6 +163,7 @@ select:focus {
 }
 
 .btn-next:hover {
+    cursor: pointer;
     background-color: var(--hover-btn-blue);
 }
 
@@ -214,4 +215,5 @@ select:focus {
     border: 0.12em solid var(--outline-green);
     padding: 1em;
     font-style: italic;
+    border-radius: 0.2em;
 }
