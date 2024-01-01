@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from question.models import DefaultQuestion, UserQuestion, Answer
+from question.models import DefaultQuestionEnvelope, UserQuestion, Answer
 
 # created by a user, sent to other users
 class Envelope(models.Model):
@@ -12,7 +12,7 @@ class Envelope(models.Model):
     envelope_frequency = models.IntegerField()
     envelope_due_date = models.DateField(blank=True, null=True)
     envelope_issue = models.IntegerField(default=1)
-    questions_default = models.ManyToManyField(DefaultQuestion, blank=True)
+    questions_default = models.ManyToManyField(DefaultQuestionEnvelope, blank=True)
     questions_user = models.ManyToManyField(UserQuestion, blank=True)
     user_answers = models.ManyToManyField(Answer, blank=True)
     def get_user_questions_display(self):

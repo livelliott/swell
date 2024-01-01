@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
-from question.models import DefaultQuestion, UserQuestion
+from question.models import DefaultQuestion, DefaultQuestionEnvelope, UserQuestion
 from board.models import Invitation, UserGroup
 from envelope.models import Envelope
 from .forms import EnvelopeForm
@@ -108,7 +108,7 @@ def envelope_create_invite(request):
 # @return [dictionary] - {all questions, corresponding ids}
 def get_envelope_questions(envelope):
     questions_user = envelope.questions_user.all()
-    questions_default = envelope.questions_default.all()
+    questions_default = DefaultQuestion.objects.all()
     all_questions = list(chain(questions_user, questions_default))
     question_ids = [ str(q.id) for q in all_questions ]
     return { 'questions': all_questions, 'answers': question_ids }
@@ -118,15 +118,30 @@ def get_envelope_questions(envelope):
 def envelope_create_success(request):
     return render(request, 'envelope_create_success.html')
 
+# creates copy of all existing default questions + adds to envelope
+def make_copy_default_questions(envelope):
+    envelope_id = envelope.envelope_id
+    all_default_questions = DefaultQuestion.objects.all()
+    for question in all_default_questions:
+        create_question = DefaultQuestionEnvelope(content=question.content, envelope_id=envelope_id, default_id=question.id)
+        create_question.save()
+        envelope.questions_default.add(create_question)
+    envelope.save()
+
 # adds all default questions to envelope
 # can be disabled by admin
-def default_questions(envelope, questions):
-    if len(questions) > 0:
-        for question_id in questions:
-            question = DefaultQuestion.objects.get(id=question_id)
-            envelope.questions_default.add(question)
-        envelope.save()
-
+def default_questions(envelope, questions_enabled):
+    envelope_id = envelope.envelope_id
+    make_copy_default_questions(envelope)
+    print(f"default questions enabled: {questions_enabled}")
+    if len(questions_enabled) > 0:
+        # questions to be enabled by user
+        for question_id in questions_enabled:
+            # retrieve envelope-question instance and enable
+            enable_question = envelope.questions_default.filter(envelope_id=envelope_id, default_id=question_id).first()
+            enable_question.is_enabled = True
+            enable_question.save()
+        
 # creates user questions + adds to envelope
 def user_questions(envelope, user, prompts):
     if len(prompts) > 0:

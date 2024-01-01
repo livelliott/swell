@@ -54,6 +54,11 @@ body:hover * {
     font-family:  'Yeseva One', serif;
 }
 
+.title {
+    font-size: 1.8rem;
+    font-family: 'Yeseva One', serif;
+}
+
 .page-nav {
     display: flex;
     flex-direction: row;
@@ -168,4 +173,17 @@ body:hover * {
 .btn-next:hover {
     cursor: pointer;
     background-color: var(--hover-btn-blue);
+}
+
+#admin-member {
+    display: flex;
+    flex-direction: row;
+}
+
+.prompt-box {
+    font-size: 1rem;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin-top: 1rem;
 }

@@ -5,26 +5,96 @@
   <title>{% block title %}SoWell: Admin Settings{% endblock %}</title>
   <link rel="stylesheet" type="text/css" href="{% static 'envelope.css' %}">
 </head>
+<script>
+  var checkedQuestionIds = [];
+
+  function toggleCheckboxes(questionId) {
+    var promptBox = document.getElementById(questionId);
+    var unchecked = promptBox.querySelector('.unchecked');
+    var checked = promptBox.querySelector('.checked');
+
+    if (unchecked.style.display !== 'none') {
+        unchecked.style.display = 'none';
+        checked.style.display = 'block';
+        checkedQuestionIds.push(parseInt(questionId, 10));
+    } else {
+        unchecked.style.display = 'block';
+        checked.style.display = 'none';
+        var index = checkedQuestionIds.indexOf(parseInt(questionId, 10));
+        if (index !== -1) {
+            checkedQuestionIds.splice(index, 1);
+      }
+    }
+  }
+  fetch("{% static 'images/checked.svg' %}")
+  .then(response => response.text())
+        .then(svgContent => {
+            const containers = document.querySelectorAll('.checked');
+            containers.forEach(container => {
+                container.innerHTML = svgContent;
+            });
+        });
+  fetch("{% static 'images/unchecked.svg' %}")
+  .then(response => response.text())
+        .then(svgContent => {
+            const containers = document.querySelectorAll('.unchecked');
+            containers.forEach(container => {
+                container.innerHTML = svgContent;
+            });
+        });
+</script>
 <body>
   <div class="container">
     {% block content %}
-      <div class="section">
         {% if envelope.envelope_admin == user %}
+          <div class="section">
             {% if messages %}
-                {% for message in messages %}
-                <p  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
-                {% endfor %}
+              {% for message in messages %}
+                <p {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
+              {% endfor %}
             {% endif %}
             <div class="envelope-settings">
-                <p>envelope settings</p>
+              <div class="main-title">Issue #{{ envelope.envelope_issue}}: {{ envelope.envelope_name }}</div>
+              <div class="page-nav">
+                <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}">Envelope</a>
+                <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}/members">Members</a>
+                <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}/admin">Settings</a>
+              </div>
             </div>
-            {% else %}
-                <p>You do not have permission to view this page.</p>
+          </div>
+          <div class="section">
+            <div class="title">User Questions</div>
+            {% for question in questions_user %}
+              <div class="prompt-box" id="{{ question.id }}">
+                {% if question.is_enabled %}
+                  <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}')"></div>
+                  <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}')" style="display: none;"></div>
+                  {% else %}
+                  <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}')" style="display: none;"></div>
+                  <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}')"></div>
+                {% endif %}
+                <label class="default-prompt" id="{{ question.id }}">{{ question.content }}</label>
+              </div>
+            {% endfor %}
+          </div>
+          <div class="section">
+            <div class="title">SoWell Questions</div>
+            {% for question in questions_default %}
+            <div class="prompt-box" id="{{ question.id }}">
+              {% if question.is_enabled %}
+                <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}')"></div>
+                <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}')" style="display: none;"></div>
+                {% else %}
+                <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}')" style="display: none;"></div>
+                <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}')"></div>
+              {% endif %}
+              <label class="default-prompt" id="{{ question.id }}">{{ question.content }}</label>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p>Under construction for envelope members</p>
         {% endif %}
-      </div>
-      <div class="section">
-        this is another section
-      </div>
     {% endblock %}
   </div>
 </body>

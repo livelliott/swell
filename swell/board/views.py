@@ -2,7 +2,7 @@ from django.http import HttpResponseServerError
 from django.shortcuts import render, redirect, reverse
 from .models import UserGroup
 from envelope.models import Envelope
-from question.models import Answer, BaseQuestion, UserQuestion
+from question.models import Answer, BaseQuestion, UserQuestion, DefaultQuestionEnvelope
 from itertools import chain
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -32,6 +32,7 @@ def envelope(request, envelope_id):
         questions = get_envelope_questions(envelope)['questions']
         prev_answers = get_previous_answers(envelope, user, questions)
         answers = get_envelope_questions(envelope)['answers']
+        print(f"question ids: {answers}")
         started = envelope_started(envelope)
         context = {
             'envelope_id': envelope_id,
@@ -45,22 +46,25 @@ def envelope(request, envelope_id):
             if started:
                 # for each question-answer pair
                 for a in answers:
-                    # answer name == question.id
-                    user_answer = request.POST.get(a)
-                    # if question was answered
-                    if not user_answer.isspace():
-                        question = BaseQuestion.objects.get(id=a)
-                        answered = Answer.objects.filter(envelope=envelope, user=user, question=question).first()
-                        # if user has answered this question already
-                        if answered:
-                            # modify the question
-                            answered.user_answer = user_answer
-                            answered.save()
-                        else:
-                            # else create it 
-                            answer = Answer(user=request.user, question=question, user_answer=user_answer)
-                            answer.save()
-                            envelope.user_answers.add(answer)
+                    # if admin enabled question
+                    question = BaseQuestion.objects.get(id=a) 
+                    if question.is_enabled:
+                        # answer name == question.id
+                        user_answer = request.POST.get(a)
+                        # if question was answered
+                        if not user_answer.isspace():
+                            question = BaseQuestion.objects.get(id=a)
+                            answered = Answer.objects.filter(envelope=envelope, user=user, question=question).first()
+                            # if user has answered this question already
+                            if answered:
+                                # modify the question
+                                answered.user_answer = user_answer
+                                answered.save()
+                            else:
+                                # else create it 
+                                answer = Answer(user=request.user, question=question, user_answer=user_answer)
+                                answer.save()
+                                envelope.user_answers.add(answer)
                 messages.success(request, f"Saved answers for {envelope.envelope_name}.")
                 return redirect(reverse('board:board_home'))
             else:
@@ -116,10 +120,14 @@ def envelope_admin(request, envelope_id):
     user = request.user
     envelope = Envelope.objects.get(envelope_id=envelope_id)
     envelope_admin = envelope.envelope_admin
+    questions_user = envelope.questions_user.all()
+    questions_default = envelope.questions_default.all()
     context = {
         'user': user,
         'envelope_admin': envelope_admin,
         'envelope': envelope,
+        'questions_user': questions_user,
+        'questions_default': questions_default,
     }
     return render(request, 'envelope_admin.html', context)
 
@@ -143,9 +151,10 @@ def envelope_started(envelope):
 # @return [dictionary] - {all questions, corresponding ids}
 def get_envelope_questions(envelope):
     questions_user = envelope.questions_user.all()
-    questions_default = envelope.questions_default.all()
+    questions_default = DefaultQuestionEnvelope.objects.filter(envelope_id=envelope.envelope_id)
     all_questions = list(chain(questions_user, questions_default))
     question_ids = [ str(q.id) for q in all_questions ]
+    print(question_ids)
     return { 'questions': all_questions, 'answers': question_ids }
 
 # retrieves questions and previous answers if they exist

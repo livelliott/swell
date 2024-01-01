@@ -9,6 +9,10 @@ class BaseQuestion(models.Model):
 class DefaultQuestion(BaseQuestion):
     pass
 
+class DefaultQuestionEnvelope(BaseQuestion):
+    envelope_id = models.IntegerField()
+    default_id = models.IntegerField()
+
 class UserQuestion(BaseQuestion):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     display_name = models.CharField(max_length=50, null=True)
