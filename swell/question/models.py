@@ -11,6 +11,7 @@ class DefaultQuestion(BaseQuestion):
 
 class UserQuestion(BaseQuestion):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    display_name = models.CharField(max_length=50, null=True)
 
 class Answer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

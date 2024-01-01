@@ -10,7 +10,9 @@
   --white: #ffffff;
   --black: #000; 
   --main-blue: #538FE8;
+  --hover-text-blue: #4274bf;
   --hover-btn-blue: #8fb9f9;
+  --hover-bg-blue: #dae7fb;
   --outline-grey: #d5d5d5;
   --hover-blue: #eff6ff;
   --bg-blue: #EEF4FD;
@@ -23,6 +25,10 @@
 body {
     font-family: 'Karla', sans-serif;
     background-color: var(--bg-blue);
+    width: 100%;
+    min-height: 100vh; /* Ensure the body takes at least the full viewport height */
+    display: grid;
+    place-items: center;
 }
 
 body:hover * {
@@ -33,7 +39,7 @@ body:hover * {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 3em;
+    width: 100%;
 }
 
 .section {
@@ -49,7 +55,34 @@ body:hover * {
 }
 
 .page-nav {
+    display: flex;
+    flex-direction: row;
     background-color: var(--bg-blue);
+    justify-content: space-between;
+    margin-top: 1.5em;
+    border-radius: 0.2em;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--main-blue);
+    padding: 1em;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.nav-link:hover {
+    color: var(--hover-text-blue);
+    background-color: var(--hover-bg-blue);
+}
+
+.asked-by {
+    font-style: italic;
+    font-size: 0.85rem;
+    margin-top: 0.2em;
+    color: var(--text-grey);
+    font-weight: 100;
 }
 
 .prompt-text {
@@ -59,8 +92,8 @@ body:hover * {
 }
 
 .prompt {
-    font-weight: bold;
     margin-bottom: 0.7em;
+    margin-top: 2em;
 }
 
 .text-field {
@@ -75,4 +108,64 @@ body:hover * {
 .text-field:focus {
     border: 0.12em solid var(--main-blue);
     outline: none;  
+}
+
+.text-field-large {
+    height: 7rem;
+    resize: none;
+}
+
+.sub-prompt {
+    font-size: 1rem;
+    color: var(--text-grey);
+    font-weight: 100;
+    margin-top: 0.5em;
+}
+
+.btns {
+    margin-top: 2.5em;
+    gap: 1.5em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.btn-cancel {
+    background-color: var(--white);
+    border: 0.12rem solid var(--black);
+    font-size: 1.1rem;
+    color: var(--black);
+    width: 100%;
+    padding: 0.7em 2em;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 0.2em;
+    cursor: pointer;
+}
+
+.btn-next {
+    font-family: 'Karla', sans-serif;
+    width: 100%;
+    font-weight: bold;
+    background-color: var(--main-blue);
+    font-size: 1.1rem;
+    color: var(--white);
+    width: 100%;
+    padding: 0.7em 2em;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 0.2em;
+    border: none;
+    outline: none;
+}
+
+.btn-cancel:hover {
+    background-color: var(--btn-grey);
+    border: 0.12rem solid var(--btn-grey);
+    color: var(--white);
+}
+
+.btn-next:hover {
+    cursor: pointer;
+    background-color: var(--hover-btn-blue);
 }

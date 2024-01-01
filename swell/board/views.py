@@ -9,7 +9,6 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from envelope.views import valid_invite, send_invite
 from django.utils import timezone
-from word2number import w2n
 
 @login_required
 def home_page(request):

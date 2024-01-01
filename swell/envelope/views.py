@@ -73,12 +73,12 @@ def envelope_create_prompts(request):
                 envelope_frequency=envelope_frequency,
                 envelope_due_date=(envelope_query_date + timedelta(days=envelope_frequency)).strftime("%Y-%m-%d"))
             envelope.save()
-            # add default + custom questions to envelope
-            default_questions(envelope, questions)
-            user_questions(envelope, request.user, prompts)
             # create corresponding user group for admin
             user_group = UserGroup(user=request.user, display_name=display_name, envelope=envelope, env_id=envelope.envelope_id)
             user_group.save()
+            # add default + custom questions to envelope
+            default_questions(envelope, questions)
+            user_questions(envelope, request.user, prompts)
             request.session['envelope_id'] = str(envelope.envelope_id)
             messages.success(request, f"Successfully added prompts to Envelope.")
             return redirect('envelope:envelope_create_invite')
@@ -130,7 +130,8 @@ def default_questions(envelope, questions):
 def user_questions(envelope, user, prompts):
     if len(prompts) > 0:
         for prompt in prompts:
-            create_prompt = UserQuestion(content=prompt, user=user, is_enabled=True)
+            user_group = UserGroup.objects.filter(user=user, envelope=envelope).first()
+            create_prompt = UserQuestion(content=prompt, user=user, display_name=user_group.display_name, is_enabled=True)
             create_prompt.save()
             envelope.questions_user.add(create_prompt)
             envelope.save()

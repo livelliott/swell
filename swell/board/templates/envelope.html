@@ -9,7 +9,7 @@
   <div class="container">
     <div class="section">
       {% block content %}
-      <div class="main-title">{{ envelope.envelope_name }}</div>
+      <div class="main-title">Issue #{{ envelope.envelope_issue}}: {{ envelope.envelope_name }}</div>
       <div class="page-nav">
         <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}">Envelope</a>
         <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}/members">Members</a>
@@ -22,21 +22,37 @@
           {% csrf_token %}
           {% for question, prev_answer in prev_answers.items %}
             {% if question.is_enabled %}
-              <label for="{{ question.id }}">{{ question.content }}</label>
-              <input type="text" name="{{ question.id }}" value="{{ prev_answer }}"><br>
+              <div class="prompt-text">
+                <label class="prompt" for="{{ question.id }}">{{ question.content }}
+                  {% if question.user %}
+                      <p class="asked-by">asked by {{ question.display_name }}</p>
+                    {% else %}
+                      <p class="asked-by">asked by SoWell</p>
+                  {% endif %}
+                </label>
+                <textarea class="text-field text-field-large" type="text" name="{{ question.id }}" placeholder="Your response goes here.">{{ prev_answer }}</textarea>
+              </div>
             {% endif %}
           {% endfor %}
-          <input type="submit" value="Save">
+          <div class="btns">
+            <a class="btn-cancel" href="{% url 'board:board_home' %}">Cancel</a>
+            <input class="btn-next" type="submit" value="Save">
+          </div>
         </form>
         {% else %}
         <form method="post" action="">
           {% csrf_token %}
-          <label for="user_question">Suggest a question/prompt for the next envelope:</label>
-          <input type="text" name="user_question">
-          <input type="submit" value="Save">
+          <div class="prompt-text">
+            <label class="prompt" for="user_question">Suggest a prompt for you and your friends to write about</label>
+            <input class="text-field" type="text" name="user_question" placeholder="Your prompt goes here...">
+            <label class="sub-prompt" for="user_question"><i>You may submit two prompts.</i></label>
+          </div>
+          <div class="btns">
+            <a class="btn-cancel" href="{% url 'board:board_home' %}">Return to Home</a>
+            <input class="btn-next" type="submit" value="Save">
+          </div>
         </form>
         {% endif %}
-        <a href="{% url 'board:board_home' %}"><button type="button">Exit</button></a>
       {% endblock %}
     </div>
   </div>

@@ -39,6 +39,8 @@
   function showCustomPrompt() {
     var addCustomPrompt = document.getElementById('custom-prompt-display');
     var background = document.getElementById('background');
+    document.getElementById('user_custom_prompt').focus();
+    document.getElementById('user_custom_prompt').select();  
     addCustomPrompt.style.opacity = 1;
     background.style.filter = 'blur(0.3em) brightness(98%)';
   }
