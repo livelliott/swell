@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from envelope.views import valid_invite, send_invite
 from django.utils import timezone
+from word2number import w2n
 
 @login_required
 def home_page(request):
@@ -109,6 +110,18 @@ def envelope_members(request, envelope_id):
     except Exception as e:
         print(f"An error occurred: {e}")
         return HttpResponseServerError("An error occurred. Please try again later.")
+
+@login_required
+def envelope_admin(request, envelope_id):
+    user = request.user
+    envelope = Envelope.objects.get(envelope_id=envelope_id)
+    envelope_admin = envelope.envelope_admin
+    context = {
+        'user': user,
+        'envelope_admin': envelope_admin,
+        'envelope': envelope,
+    }
+    return render(request, 'envelope_admin.html', context)
 
 # returns a list envelopes the user has joined
 def get_joined_envelopes(request):

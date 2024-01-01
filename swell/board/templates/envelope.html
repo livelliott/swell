@@ -2,31 +2,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>{% block title %}Envelope Name{% endblock %}</title>
+  <title>{% block title %}SoWell: {{ envelope.envelope_name }}{% endblock %}</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'envelope.css' %}">
 </head>
 <body>
-  {% block content %}
-    <a href="/dashboard/envelope/{{ envelope.envelope_id }}/members">Members</a>
-    {% if started %}
-      <form method="post" action="">
-        {% csrf_token %}
-        {% for question, prev_answer in prev_answers.items %}
-          {% if question.is_enabled %}
-            <label for="{{ question.id }}">{{ question.content }}</label>
-            <input type="text" name="{{ question.id }}" value="{{ prev_answer }}"><br>
-          {% endif %}
-        {% endfor %}
-        <input type="submit" value="Save">
-      </form>
-      {% else %}
-      <form method="post" action="">
-        {% csrf_token %}
-        <label for="user_question">Suggest a question/prompt for the next envelope:</label>
-        <input type="text" name="user_question">
-        <input type="submit" value="Save">
-      </form>
-      {% endif %}
-      <a href="{% url 'board:board_home' %}"><button type="button">Exit</button></a>
-  {% endblock %}
+  <div class="container">
+    <div class="section">
+      {% block content %}
+      <div class="main-title">{{ envelope.envelope_name }}</div>
+      <div class="page-nav">
+        <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}">Envelope</a>
+        <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}/members">Members</a>
+        {% if user == envelope.envelope_admin %}
+          <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}/admin">Settings</a>
+        {% endif %}
+      </div>
+      {% if started %}
+        <form method="post" action="">
+          {% csrf_token %}
+          {% for question, prev_answer in prev_answers.items %}
+            {% if question.is_enabled %}
+              <label for="{{ question.id }}">{{ question.content }}</label>
+              <input type="text" name="{{ question.id }}" value="{{ prev_answer }}"><br>
+            {% endif %}
+          {% endfor %}
+          <input type="submit" value="Save">
+        </form>
+        {% else %}
+        <form method="post" action="">
+          {% csrf_token %}
+          <label for="user_question">Suggest a question/prompt for the next envelope:</label>
+          <input type="text" name="user_question">
+          <input type="submit" value="Save">
+        </form>
+        {% endif %}
+        <a href="{% url 'board:board_home' %}"><button type="button">Exit</button></a>
+      {% endblock %}
+    </div>
+  </div>
 </body>
 </html>

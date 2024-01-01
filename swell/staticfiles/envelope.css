@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@300;400;600&family=Yeseva+One&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --white: #ffffff;
+  --black: #000; 
+  --main-blue: #538FE8;
+  --hover-btn-blue: #8fb9f9;
+  --outline-grey: #d5d5d5;
+  --hover-blue: #eff6ff;
+  --bg-blue: #EEF4FD;
+  --text-grey: #8e8e8e;
+  --btn-grey: #bcbcbc;
+  --outline-green: #9CD29D;
+  --main-green: #d6edd6;
+}
+
+body {
+    font-family: 'Karla', sans-serif;
+    background-color: var(--bg-blue);
+}
+
+body:hover * {
+    transition: all 0.2s cubic-bezier(.68,0,.68,.86);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 3em;
+}
+
+.section {
+    width: 65%;
+    background-color: var(--white);
+    padding: 5em 6em;
+    border: 0.12em solid var(--outline-grey);
+}
+
+.main-title {
+    font-size: 2.3rem;
+    font-family:  'Yeseva One', serif;
+}
+
+.page-nav {
+    background-color: var(--bg-blue);
+}
+
+.prompt-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.2em;
+}
+
+.prompt {
+    font-weight: bold;
+    margin-bottom: 0.7em;
+}
+
+.text-field {
+    padding: 0.8em;
+    border-radius: 0.2em;
+    border: 0.12em solid var(--outline-grey);
+    font-family: 'Karla', sans-serif;
+    font-size: 1rem;
+    color: var(--text-grey);
+}
+
+.text-field:focus {
+    border: 0.12em solid var(--main-blue);
+    outline: none;  
+}

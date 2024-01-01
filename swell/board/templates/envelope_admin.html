@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block title %}SoWell: Admin Settings{% endblock %}</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'envelope.css' %}">
+</head>
+<body>
+  <div class="container">
+    {% block content %}
+      <div class="section">
+        {% if envelope.envelope_admin == user %}
+            {% if messages %}
+                {% for message in messages %}
+                <p  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
+                {% endfor %}
+            {% endif %}
+            <div class="envelope-settings">
+                <p>envelope settings</p>
+            </div>
+            {% else %}
+                <p>You do not have permission to view this page.</p>
+        {% endif %}
+      </div>
+      <div class="section">
+        this is another section
+      </div>
+    {% endblock %}
+  </div>
+</body>
+</html>
