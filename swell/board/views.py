@@ -41,8 +41,9 @@ def envelope(request, envelope_id):
             'started': started,
         }
         if request.method == 'POST' and envelope_member(user, envelope_id):
-            # if question period commenced
+            # if question period has begun
             if started:
+                # for each question-answer pair
                 for a in answers:
                     # answer name == question.id
                     user_answer = request.POST.get(a)
@@ -60,13 +61,13 @@ def envelope(request, envelope_id):
                             answer = Answer(user=request.user, question=question, user_answer=user_answer)
                             answer.save()
                             envelope.user_answers.add(answer)
-                    messages.success(request, f"Saved answers for {envelope.envelope_name}.")
-                    return redirect(reverse('board:board_home'))
+                messages.success(request, f"Saved answers for {envelope.envelope_name}.")
+                return redirect(reverse('board:board_home'))
             else:
                 # get user to suggest questions
                 if len(UserQuestion.objects.filter(user=user, envelope=envelope)) < 2:
                     user_question = request.POST.get('user_question')
-                    question = UserQuestion(content=user_question, user=user)
+                    question = UserQuestion(content=user_question, user=user, display_name=user_group.display_name)
                     question.save()
                     envelope.questions_user.add(question)
                     envelope.save()

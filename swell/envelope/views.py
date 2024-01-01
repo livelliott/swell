@@ -121,10 +121,11 @@ def envelope_create_success(request):
 # adds all default questions to envelope
 # can be disabled by admin
 def default_questions(envelope, questions):
-    for question_id in questions:
-        question = DefaultQuestion.objects.get(id=question_id)
-        envelope.questions_default.add(question)
-    envelope.save()
+    if len(questions) > 0:
+        for question_id in questions:
+            question = DefaultQuestion.objects.get(id=question_id)
+            envelope.questions_default.add(question)
+        envelope.save()
 
 # creates user questions + adds to envelope
 def user_questions(envelope, user, prompts):
