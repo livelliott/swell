@@ -169,7 +169,6 @@ select:focus {
 
 .prompt-box {
     font-size: 1.3rem;
-    font-weight: bold;
     display: flex;
     flex-direction: row;
     gap: 1rem;
@@ -220,4 +219,9 @@ select:focus {
     font-style: italic;
     border-radius: 0.2em;
     margin-top: 1em;
+}
+
+.hyperlink {
+    color: var(--main-blue);
+    font-weight: bold;
 }

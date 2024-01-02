@@ -65,7 +65,6 @@ def envelope(request, envelope_id):
                                 answer.save()
                                 envelope.user_answers.add(answer)
                 messages.success(request, f"Saved answers for {envelope.envelope_name}.")
-                return redirect(reverse('board:board_home'))
             else:
                 # get user to suggest questions
                 if len(UserQuestion.objects.filter(user=user, envelope=envelope)) < 2:
@@ -75,12 +74,9 @@ def envelope(request, envelope_id):
                     envelope.questions_user.add(question)
                     envelope.save()
                     messages.success(request, "Submitted.")
-                    return redirect(reverse('board:board_home'))
                 else:
                     messages.success(request, "You may only submit two prompts per envelope.")
-                    return redirect(reverse('board:board_home'))
-        else:
-            return render(request, 'envelope.html', context)
+        return render(request, 'envelope.html', context)
     except ObjectDoesNotExist:
         messages.success(request, "You do not have permission to view this page.")
         return render(request, 'home.html')
@@ -123,8 +119,12 @@ def envelope_admin(request, envelope_id):
     questions_user_checked = get_enabled_questions(questions_user)
     questions_default = DefaultQuestionEnvelope.objects.filter(envelope_id=envelope_id)
     questions_default_checked = get_enabled_questions(questions_default)
+    display_name = UserGroup.objects.get(envelope=envelope, user=user)
+    started = envelope_started(envelope)
     context = {
         'user': user,
+        'display_name': display_name.display_name,
+        'started': started,
         'envelope_admin': envelope_admin,
         'envelope': envelope,
         'questions_user': questions_user,
@@ -135,14 +135,25 @@ def envelope_admin(request, envelope_id):
     # if admin saves questions
     if request.method == 'POST' and user == envelope_admin:
         envelope_name = request.POST.get('envelope_name')
+        user_display_name = request.POST.get('display_name')
+        # change envelope name if modified
         if envelope_name != envelope.envelope_name:
             envelope.envelope_name = envelope_name
             envelope.save()
+        if display_name.display_name != user_display_name:
+            display_name.display_name = user_display_name
+            display_name.save()
         user_questions_checked = request.POST.get('checked_user_question_ids')
         modify_questions_checked(questions_user, user_questions_checked)
         default_questions_checked = request.POST.get('checked_default_question_ids')
         modify_questions_checked(questions_default, default_questions_checked)
-        messages.success(request, f"Successfully modified {envelope.envelope_name}.")       
+        messages.success(request, f"Successfully modified {envelope.envelope_name}.")
+    elif request.method == 'POST':
+        user_display_name = request.POST.get('display_name')
+        if display_name.display_name != user_display_name:
+            display_name.display_name = user_display_name
+            display_name.save()
+            messages.success(request, f"Successfully changed display name to {user_display_name}.")
     return render(request, 'envelope_admin.html', context)
 
 def modify_questions_checked(all_questions, questions_checked):

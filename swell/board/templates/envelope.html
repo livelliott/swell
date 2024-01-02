@@ -13,10 +13,13 @@
       <div class="page-nav">
         <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}">Envelope</a>
         <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}/members">Members</a>
-        {% if user == envelope.envelope_admin %}
-          <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}/admin">Settings</a>
-        {% endif %}
+        <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}/admin">Settings</a>
       </div>
+      {% if messages %}
+        {% for message in messages %}
+          <p {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
+        {% endfor %}
+      {% endif %}
       {% if started %}
         <form method="post" action="">
           {% csrf_token %}
@@ -35,7 +38,7 @@
             {% endif %}
           {% endfor %}
           <div class="btns">
-            <a class="btn-cancel" href="{% url 'board:board_home' %}">Cancel</a>
+            <a class="btn-cancel" href="{% url 'board:board_home' %}">Return to Home</a>
             <input class="btn-next" type="submit" value="Save">
           </div>
         </form>

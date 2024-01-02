@@ -70,7 +70,7 @@ function onSubmit() {
 </script>
 <body>
     {% block content %}
-        {% if envelope.envelope_admin == user %}
+        
           <form class="container" method="post" action="" onsubmit="onSubmit()">
             {% csrf_token %}
             <div class="section">
@@ -83,50 +83,65 @@ function onSubmit() {
                 </div>
                 {% if messages %}
                   {% for message in messages %}
-                    <p class="success-box" {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
+                    <p {% if message.tags %} class="{{ message.tags }}-box" {% endif %}> {{ message }} </p>
                   {% endfor %}
                 {% endif %}
               </div>
-              <div class="title">Envelope Name</div>
-              <div class="sub-title">Members will be notified if the name is modified.</div>
-              <input class="text-field" type="text" name="envelope_name" placeholder="Envelope Name" value="{{ envelope.envelope_name }}">
-              <div class="title">User Questions</div>
-                {% for question in questions_user %}
+              {% if envelope.envelope_admin == user %}
+                <div class="text-input">
+                  <div class="title">Envelope Name</div>
+                  <div class="sub-title">Members will be notified if the name is modified.</div>
+                  <input class="text-field" type="text" name="envelope_name" placeholder="Envelope Name" value="{{ envelope.envelope_name }}">
+                </div>
+              {% endif %}
+              <div class="text-input">
+                <div class="title">Display Name</div>
+                <div class="sub-title">This is how your name will appear to other members.</div>
+                <input class="text-field" type="text" name="display_name" placeholder="Display Name" value="{{ display_name }}">
+              </div>
+              {% if envelope.envelope_admin == user %}
+              {% if not started %}
+                <div class="title">User Questions</div>
+                {% if not questions_user %}
+                  <p class="sub-title">There aren't any user questions at the moment. Create one <a class="hyperlink" href="/dashboard/envelope/{{ envelope.envelope_id }}">here!</a></p>
+                {% else %}
+                  {% for question in questions_user %}
+                    <div class="prompt-box" id="{{ question.id }}">
+                      {% if question.is_enabled %}
+                        <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}', 'user')"></div>
+                        <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}', 'user')" style="display: none;"></div>
+                        {% else %}
+                        <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}', 'user')" style="display: none;"></div>
+                        <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}', 'user')"></div>
+                      {% endif %}
+                      <label class="default-prompt" id="{{ question.id }}">{{ question.content }}</label>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+                  <div class="title">SoWell Questions</div>
+                  {% for question in questions_default %}
                   <div class="prompt-box" id="{{ question.id }}">
                     {% if question.is_enabled %}
-                      <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}', 'user')"></div>
-                      <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}', 'user')" style="display: none;"></div>
+                      <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}', 'default')"></div>
+                      <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}', 'default')" style="display: none;"></div>
                       {% else %}
-                      <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}', 'user')" style="display: none;"></div>
-                      <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}', 'user')"></div>
+                      <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}', 'default')" style="display: none;"></div>
+                      <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}', 'default')"></div>
                     {% endif %}
                     <label class="default-prompt" id="{{ question.id }}">{{ question.content }}</label>
                   </div>
                 {% endfor %}
-                <div class="title">SoWell Questions</div>
-                {% for question in questions_default %}
-                <div class="prompt-box" id="{{ question.id }}">
-                  {% if question.is_enabled %}
-                    <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}', 'default')"></div>
-                    <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}', 'default')" style="display: none;"></div>
-                    {% else %}
-                    <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}', 'default')" style="display: none;"></div>
-                    <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}', 'default')"></div>
-                  {% endif %}
-                  <label class="default-prompt" id="{{ question.id }}">{{ question.content }}</label>
-                </div>
-                {% endfor %}
-                <div class="btns">
-                  <a class="btn-cancel" href="{% url 'board:board_home' %}">Return to Home</a>
-                  <input class="btn-next" type="submit" value="Save">
-                </div>
-                <input type="hidden" id="checkedUserQuestionIdsInput" name="checked_user_question_ids" value="">
-                <input type="hidden" id="checkedDefaultQuestionIdsInput" name="checked_default_question_ids" value="">
-              </form>
-            </div>
-        {% else %}
-          <p>Under construction for envelope members</p>
-        {% endif %}
+              {% endif %}
+              {% endif %}
+              <div class="btns">
+                <a class="btn-cancel" href="{% url 'board:board_home' %}">Return to Home</a>
+                <input class="btn-next" type="submit" value="Modify">
+              </div>
+              
+              <input type="hidden" id="checkedUserQuestionIdsInput" name="checked_user_question_ids" value="">
+              <input type="hidden" id="checkedDefaultQuestionIdsInput" name="checked_default_question_ids" value="">
+            </form>
+          </div>
     {% endblock %}
   </div>
 </body>

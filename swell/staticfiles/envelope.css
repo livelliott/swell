@@ -57,7 +57,7 @@ body:hover * {
 .title {
     font-size: 1.8rem;
     font-family: 'Yeseva One', serif;
-    margin-top: 1.5em;
+    margin-top: 1em;
 }
 
 .page-nav {
@@ -193,13 +193,53 @@ body:hover * {
     flex-direction: row;
     gap: 1rem;
     margin-top: 1rem;
+    align-items: center;
 }
 
 .success-box {
+    margin: 0;
     background-color: var(--main-green);
     border: 0.12em solid var(--outline-green);
     padding: 1em;
     font-style: italic;
     border-radius: 0.2em;
     margin-top: 1em;
+}
+
+.add-custom-prompt {
+    z-index: 100;
+    position: fixed;
+    top: 20%;
+    left: 20%;
+    width: 60%;
+    height: 45%;
+}
+
+.input-button {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5em;
+    margin-top: 1em;
+}
+
+.text-field-inline {
+    margin-top: 0;
+}
+
+.button-inline {
+    width: 50%;
+}
+
+.title-invite {
+    font-size: 1.5rem;
+    margin: 1em 0em 1em 0em;
+}
+
+.name {
+    margin: 1em 0em 1em 0em;
+}
+
+.hyperlink {
+    color: var(--main-blue);
+    font-weight: bold;
 }

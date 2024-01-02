@@ -17,27 +17,32 @@
         </div>
         {% if messages %}
           {% for message in messages %}
-            <p  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
+            <p class="success-box" {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
           {% endfor %}
         {% endif %}
         <div class="members">
             {% for env_user in envelope_users %}
               {% if env_user.user == envelope_admin %}
-                <p>{{ env_user.display_name }} - @{{ env_user.user.username }} - Admin</p>
+                <p class="sub-title name">{{ env_user.display_name }}: @{{ env_user.user.username }} - Admin</p>
               {% else %}
-                <p>{{ env_user.display_name }} - @{{ env_user.user.username }}</p>
+                <p class="sub-title name">{{ env_user.display_name }}: @{{ env_user.user.username }}</p>
               {% endif %}
             {% endfor %}
         </div>
         {% if envelope.envelope_admin == user %}
             <form method="post" action="">
                 {% csrf_token %}
-                <label for="user_email">Email for user:</label>
-                <input type="text" id="user_email" name="user_email">
-                <input type="submit" value="Submit">
+                <label class="title title-invite" for="user_email">Invite new members to your envelope</label>
+                <div class="input-button">
+                  <input class="text-field text-field-inline" type="text" id="user_email" name="user_email" placeholder="Email">
+                  <input class="btn-next button-inline" type="submit" value="Submit">
+                </div>
             </form>
         {% endif %}
       {% endblock %}
+      <div class="btns">
+        <a class="btn-cancel" href="{% url 'board:board_home' %}">Return to Home</a>
+      </div>
     </div>
   </div>
 </body>
