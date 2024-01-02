@@ -17,7 +17,7 @@ def landing(request):
 def login_user(request):
     # if the user is tries to view protected page
     if not request.user.is_authenticated and 'next' in request.GET:
-        messages.info(request, 'You must log in to view this page.')
+        messages.error(request, 'You must log in to view this page.')
     # redirect home if already logged in
     if request.user.is_authenticated:
         return redirect(reverse('board:board_home'))
@@ -33,7 +33,7 @@ def login_user(request):
         else:
             # Return an 'invalid login' error message.
             # they just went to the page, so show the page
-            messages.success(request, "Invalid username or password.")
+            messages.error(request, "Invalid username or password.")
             return redirect(reverse('members:login_users'))
     else:
         return render(request, 'registration/login.html', {})
@@ -74,7 +74,7 @@ def accept_invite(request, invite_token):
             invite = get_object_or_404(Invitation, invite_token=invite_token)
             envelope = get_object_or_404(Envelope, envelope_id=invite.envelope_id)
             if joined_envelope(request.user, invite.envelope_id):
-                messages.success(request, f"Already joined {envelope.envelope_name}.")
+                messages.error(request, f"Already joined {envelope.envelope_name}.")
             else:
                 # update invite status
                 invite.recipient = current_user

@@ -94,11 +94,11 @@ body:hover * {
 .prompt-text {
     display: flex;
     flex-direction: column;
-    font-size: 1.2em;
+    font-size: 1em;
 }
 
 .prompt {
-    margin-bottom: 0.7em;
+    margin-bottom: 0.5em;
     margin-top: 2em;
 }
 

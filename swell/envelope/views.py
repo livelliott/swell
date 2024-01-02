@@ -83,7 +83,7 @@ def envelope_create_prompts(request):
             messages.success(request, f"Successfully added prompts to Envelope.")
             return redirect('envelope:envelope_create_invite')
         else:
-            messages.success(request, f"You need at least one prompt in your Envelope.")
+            messages.error(request, f"You need at least one prompt in your Envelope.")
             return redirect('envelope:envelope_create_prompts')
     return render(request, 'envelope_create_prompts.html', context)
 
@@ -177,7 +177,7 @@ def invite_members(request, envelope_id, members):
             send_invite(request=request, envelope_id=envelope_id, email=user_email)
             messages.success(request, "Invite sent to " + user_email)
         else:
-            messages.success(request, "ERROR")
+            messages.error(request, f"Could not send invite to {user_email}")
 
 # sends email invite with custom link
 # @redirect - none

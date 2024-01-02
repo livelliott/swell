@@ -65,6 +65,7 @@ def envelope(request, envelope_id):
                                 answer.save()
                                 envelope.user_answers.add(answer)
                 messages.success(request, f"Saved answers for {envelope.envelope_name}.")
+                return redirect('board:board_envelope', envelope_id=envelope_id)
             else:
                 # get user to suggest questions
                 if len(UserQuestion.objects.filter(user=user, envelope=envelope)) < 2:
@@ -73,12 +74,14 @@ def envelope(request, envelope_id):
                     question.save()
                     envelope.questions_user.add(question)
                     envelope.save()
-                    messages.success(request, "Submitted.")
+                    messages.success(request, "Submitted prompts.")
+                    return redirect('board:board_envelope', envelope_id=envelope_id)
                 else:
-                    messages.success(request, "You may only submit two prompts per envelope.")
+                    messages.error(request, "You may only submit two prompts per envelope.")
+                    return redirect('board:board_envelope', envelope_id=envelope_id)
         return render(request, 'envelope.html', context)
     except ObjectDoesNotExist:
-        messages.success(request, "You do not have permission to view this page.")
+        messages.error(request, "You do not have permission to view this page.")
         return render(request, 'home.html')
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -148,12 +151,14 @@ def envelope_admin(request, envelope_id):
         default_questions_checked = request.POST.get('checked_default_question_ids')
         modify_questions_checked(questions_default, default_questions_checked)
         messages.success(request, f"Successfully modified {envelope.envelope_name}.")
+        return redirect('board:board_envelope_admin', envelope_id=envelope_id)
     elif request.method == 'POST':
         user_display_name = request.POST.get('display_name')
         if display_name.display_name != user_display_name:
             display_name.display_name = user_display_name
             display_name.save()
             messages.success(request, f"Successfully changed display name to {user_display_name}.")
+            return redirect('board:board_envelope_admin', envelope_id=envelope_id)
     return render(request, 'envelope_admin.html', context)
 
 def modify_questions_checked(all_questions, questions_checked):
