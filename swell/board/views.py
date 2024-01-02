@@ -32,7 +32,6 @@ def envelope(request, envelope_id):
         questions = get_envelope_questions(envelope)['questions']
         prev_answers = get_previous_answers(envelope, user, questions)
         answers = get_envelope_questions(envelope)['answers']
-        print(f"question ids: {answers}")
         started = envelope_started(envelope)
         context = {
             'envelope_id': envelope_id,
@@ -121,15 +120,43 @@ def envelope_admin(request, envelope_id):
     envelope = Envelope.objects.get(envelope_id=envelope_id)
     envelope_admin = envelope.envelope_admin
     questions_user = envelope.questions_user.all()
-    questions_default = envelope.questions_default.all()
+    questions_user_checked = get_enabled_questions(questions_user)
+    questions_default = DefaultQuestionEnvelope.objects.filter(envelope_id=envelope_id)
+    questions_default_checked = get_enabled_questions(questions_default)
     context = {
         'user': user,
         'envelope_admin': envelope_admin,
         'envelope': envelope,
         'questions_user': questions_user,
+        'questions_user_checked': questions_user_checked,
         'questions_default': questions_default,
+        'questions_default_checked': questions_default_checked,
     }
+    # if admin saves questions
+    if request.method == 'POST' and user == envelope_admin:
+        envelope_name = request.POST.get('envelope_name')
+        if envelope_name != envelope.envelope_name:
+            envelope.envelope_name = envelope_name
+            envelope.save()
+        user_questions_checked = request.POST.get('checked_user_question_ids')
+        modify_questions_checked(questions_user, user_questions_checked)
+        default_questions_checked = request.POST.get('checked_default_question_ids')
+        modify_questions_checked(questions_default, default_questions_checked)
+        messages.success(request, f"Successfully modified {envelope.envelope_name}.")       
     return render(request, 'envelope_admin.html', context)
+
+def modify_questions_checked(all_questions, questions_checked):
+    questions_checked_list = [int(q_id) for q_id in questions_checked.split(',') if q_id.isdigit()]
+    for q in all_questions:
+        # if question in should be enabled
+        if q.id in questions_checked_list:
+            # enable question
+            q.is_enabled = True
+            q.save()
+        # question should be disabled
+        else:
+            q.is_enabled = False
+            q.save()
 
 # returns a list envelopes the user has joined
 def get_joined_envelopes(request):
@@ -138,6 +165,13 @@ def get_joined_envelopes(request):
     for user_group in user_groups:
         joined_envelopes.append(user_group.envelope)
     return joined_envelopes
+
+def get_enabled_questions(questions):
+    checked_question_ids = []
+    for q in questions:
+        if q.is_enabled:
+            checked_question_ids.append(q.id)
+    return checked_question_ids
 
 def envelope_started(envelope):
     today = timezone.localdate()
@@ -154,7 +188,6 @@ def get_envelope_questions(envelope):
     questions_default = DefaultQuestionEnvelope.objects.filter(envelope_id=envelope.envelope_id)
     all_questions = list(chain(questions_user, questions_default))
     question_ids = [ str(q.id) for q in all_questions ]
-    print(question_ids)
     return { 'questions': all_questions, 'answers': question_ids }
 
 # retrieves questions and previous answers if they exist

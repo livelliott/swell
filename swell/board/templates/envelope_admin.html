@@ -6,26 +6,51 @@
   <link rel="stylesheet" type="text/css" href="{% static 'envelope.css' %}">
 </head>
 <script>
-  var checkedQuestionIds = [];
+var checkedUserQuestionIds = JSON.parse('{{ questions_user_checked|safe }}');
+var checkedDefaultQuestionIds = JSON.parse('{{ questions_default_checked|safe }}');
 
-  function toggleCheckboxes(questionId) {
+function toggleCheckboxes(questionId, questionType) {
     var promptBox = document.getElementById(questionId);
     var unchecked = promptBox.querySelector('.unchecked');
     var checked = promptBox.querySelector('.checked');
-
+    
+    // Toggle the checkboxes
     if (unchecked.style.display !== 'none') {
         unchecked.style.display = 'none';
         checked.style.display = 'block';
-        checkedQuestionIds.push(parseInt(questionId, 10));
+
+        // Add the checked ID to the corresponding list based on the question type
+        if (questionType === 'user') {
+            checkedUserQuestionIds.push(parseInt(questionId, 10));
+        } else {
+            checkedDefaultQuestionIds.push(parseInt(questionId, 10));
+        }
     } else {
         unchecked.style.display = 'block';
         checked.style.display = 'none';
-        var index = checkedQuestionIds.indexOf(parseInt(questionId, 10));
-        if (index !== -1) {
-            checkedQuestionIds.splice(index, 1);
+
+        // Remove the unchecked ID from the corresponding list based on the question type
+        if (questionType === 'user') {
+            var index = checkedUserQuestionIds.indexOf(parseInt(questionId, 10));
+            if (index !== -1) {
+                checkedUserQuestionIds.splice(index, 1);
+            }
+        } else {
+            var index = checkedDefaultQuestionIds.indexOf(parseInt(questionId, 10));
+            if (index !== -1) {
+                checkedDefaultQuestionIds.splice(index, 1);
+            }
+          }
+        }
       }
-    }
-  }
+function onSubmit() {
+    console.log(checkedUserQuestionIds);
+    console.log(checkedDefaultQuestionIds);
+
+    // Update the hidden input fields with the checked IDs
+    document.getElementById('checkedUserQuestionIdsInput').value = checkedUserQuestionIds.join(',');
+    document.getElementById('checkedDefaultQuestionIdsInput').value = checkedDefaultQuestionIds.join(',');
+}
   fetch("{% static 'images/checked.svg' %}")
   .then(response => response.text())
         .then(svgContent => {
@@ -44,54 +69,61 @@
         });
 </script>
 <body>
-  <div class="container">
     {% block content %}
         {% if envelope.envelope_admin == user %}
-          <div class="section">
-            {% if messages %}
-              {% for message in messages %}
-                <p {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
-              {% endfor %}
-            {% endif %}
-            <div class="envelope-settings">
-              <div class="main-title">Issue #{{ envelope.envelope_issue}}: {{ envelope.envelope_name }}</div>
-              <div class="page-nav">
-                <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}">Envelope</a>
-                <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}/members">Members</a>
-                <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}/admin">Settings</a>
-              </div>
-            </div>
-          </div>
-          <div class="section">
-            <div class="title">User Questions</div>
-            {% for question in questions_user %}
-              <div class="prompt-box" id="{{ question.id }}">
-                {% if question.is_enabled %}
-                  <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}')"></div>
-                  <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}')" style="display: none;"></div>
-                  {% else %}
-                  <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}')" style="display: none;"></div>
-                  <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}')"></div>
+          <form class="container" method="post" action="" onsubmit="onSubmit()">
+            {% csrf_token %}
+            <div class="section">
+              <div class="envelope-settings">
+                <div class="main-title">Issue #{{ envelope.envelope_issue}}: {{ envelope.envelope_name }}</div>
+                <div class="page-nav">
+                  <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}">Envelope</a>
+                  <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}/members">Members</a>
+                  <a class="nav-link" href="/dashboard/envelope/{{ envelope.envelope_id }}/admin">Settings</a>
+                </div>
+                {% if messages %}
+                  {% for message in messages %}
+                    <p class="success-box" {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </p>
+                  {% endfor %}
                 {% endif %}
-                <label class="default-prompt" id="{{ question.id }}">{{ question.content }}</label>
               </div>
-            {% endfor %}
-          </div>
-          <div class="section">
-            <div class="title">SoWell Questions</div>
-            {% for question in questions_default %}
-            <div class="prompt-box" id="{{ question.id }}">
-              {% if question.is_enabled %}
-                <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}')"></div>
-                <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}')" style="display: none;"></div>
-                {% else %}
-                <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}')" style="display: none;"></div>
-                <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}')"></div>
-              {% endif %}
-              <label class="default-prompt" id="{{ question.id }}">{{ question.content }}</label>
+              <div class="title">Envelope Name</div>
+              <div class="sub-title">Members will be notified if the name is modified.</div>
+              <input class="text-field" type="text" name="envelope_name" placeholder="Envelope Name" value="{{ envelope.envelope_name }}">
+              <div class="title">User Questions</div>
+                {% for question in questions_user %}
+                  <div class="prompt-box" id="{{ question.id }}">
+                    {% if question.is_enabled %}
+                      <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}', 'user')"></div>
+                      <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}', 'user')" style="display: none;"></div>
+                      {% else %}
+                      <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}', 'user')" style="display: none;"></div>
+                      <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}', 'user')"></div>
+                    {% endif %}
+                    <label class="default-prompt" id="{{ question.id }}">{{ question.content }}</label>
+                  </div>
+                {% endfor %}
+                <div class="title">SoWell Questions</div>
+                {% for question in questions_default %}
+                <div class="prompt-box" id="{{ question.id }}">
+                  {% if question.is_enabled %}
+                    <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}', 'default')"></div>
+                    <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}', 'default')" style="display: none;"></div>
+                    {% else %}
+                    <div id="checked" class="checked" onclick="toggleCheckboxes('{{ question.id }}', 'default')" style="display: none;"></div>
+                    <div id="unchecked" class="unchecked" onclick="toggleCheckboxes('{{ question.id }}', 'default')"></div>
+                  {% endif %}
+                  <label class="default-prompt" id="{{ question.id }}">{{ question.content }}</label>
+                </div>
+                {% endfor %}
+                <div class="btns">
+                  <a class="btn-cancel" href="{% url 'board:board_home' %}">Return to Home</a>
+                  <input class="btn-next" type="submit" value="Save">
+                </div>
+                <input type="hidden" id="checkedUserQuestionIdsInput" name="checked_user_question_ids" value="">
+                <input type="hidden" id="checkedDefaultQuestionIdsInput" name="checked_default_question_ids" value="">
+              </form>
             </div>
-            {% endfor %}
-          </div>
         {% else %}
           <p>Under construction for envelope members</p>
         {% endif %}

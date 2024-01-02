@@ -57,6 +57,7 @@ body:hover * {
 .title {
     font-size: 1.8rem;
     font-family: 'Yeseva One', serif;
+    margin-top: 1.5em;
 }
 
 .page-nav {
@@ -108,6 +109,8 @@ body:hover * {
     font-family: 'Karla', sans-serif;
     font-size: 1rem;
     color: var(--text-grey);
+    width: 100%;
+    margin-top: 1em;
 }
 
 .text-field:focus {
@@ -118,6 +121,10 @@ body:hover * {
 .text-field-large {
     height: 7rem;
     resize: none;
+}
+
+.sub-title {
+    margin-top: 0.5em;
 }
 
 .sub-prompt {
@@ -186,4 +193,13 @@ body:hover * {
     flex-direction: row;
     gap: 1rem;
     margin-top: 1rem;
+}
+
+.success-box {
+    background-color: var(--main-green);
+    border: 0.12em solid var(--outline-green);
+    padding: 1em;
+    font-style: italic;
+    border-radius: 0.2em;
+    margin-top: 1em;
 }
