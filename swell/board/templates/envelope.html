@@ -20,29 +20,7 @@
           <p {% if message.tags %} class="{{ message.tags }}-box" {% endif %}> {{ message }} </p>
         {% endfor %}
       {% endif %}
-      {% if started %}
-        <form method="post" action="">
-          {% csrf_token %}
-          {% for question, prev_answer in prev_answers.items %}
-            {% if question.is_enabled %}
-              <div class="prompt-text">
-                <label class="prompt" for="{{ question.id }}">{{ question.content }}
-                  {% if question.user %}
-                      <p class="asked-by">asked by {{ question.display_name }}</p>
-                    {% else %}
-                      <p class="asked-by">asked by SoWell</p>
-                  {% endif %}
-                </label>
-                <textarea class="text-field text-field-large" type="text" name="{{ question.id }}" placeholder="Your response goes here.">{{ prev_answer }}</textarea>
-              </div>
-            {% endif %}
-          {% endfor %}
-          <div class="btns">
-            <a class="btn-cancel" href="{% url 'board:board_home' %}">Return to Home</a>
-            <input class="btn-next" type="submit" value="Save">
-          </div>
-        </form>
-        {% else %}
+      {% if not started and not ended %}
         <form method="post" action="">
           {% csrf_token %}
           <div class="prompt-text">
@@ -55,6 +33,52 @@
             <input class="btn-next" type="submit" value="Save">
           </div>
         </form>
+        {% elif started and ended %}
+          <div class="envelope-info">
+            <p><b>{{ published }}</b></p>
+            <p>By
+              {% for name, member in members.items %}
+                {{ name }}{% if not forloop.last %},{% endif %}
+              {% endfor %}
+            </p>
+          </div>
+          <div class="content-container">
+            <!-- for the questions in the envelope -->
+            {% for question, prev_answer in prev_answers.items %}
+              {% if question.is_enabled %}
+                <div class="question question-answers">
+                  <label class="prompt" for="{{ question.id }}">{{ question.content }}
+                    {% if question.user %}
+                        <p class="asked-by">asked by {{ question.display_name }}</p>
+                      {% else %}
+                        <p class="asked-by">asked by SoWell</p>
+                    {% endif %}
+                  </label>
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+          <form method="post" action="">
+            {% csrf_token %}
+            {% for question, prev_answer in prev_answers.items %}
+              {% if question.is_enabled %}
+                <div class="prompt-text">
+                  <label class="prompt" for="{{ question.id }}">{{ question.content }}
+                    {% if question.user %}
+                        <p class="asked-by">asked by {{ question.display_name }}</p>
+                      {% else %}
+                        <p class="asked-by">asked by SoWell</p>
+                    {% endif %}
+                  </label>
+                  <textarea class="text-field text-field-large" type="text" name="{{ question.id }}" placeholder="Your response goes here.">{{ prev_answer }}</textarea>
+                </div>
+              {% endif %}
+            {% endfor %}
+            <div class="btns">
+              <a class="btn-cancel" href="{% url 'board:board_home' %}">Return to Home</a>
+              <input class="btn-next" type="submit" value="Save">
+            </div>
+          </form>
         {% endif %}
       {% endblock %}
     </div>

@@ -33,12 +33,18 @@ def envelope(request, envelope_id):
         prev_answers = get_previous_answers(envelope, user, questions)
         answers = get_envelope_questions(envelope)['answers']
         started = envelope_started(envelope)
+        ended = envelope_ended(envelope)
+        published = envelope.envelope_due_date.strftime("%B %d, %Y")
+        members = get_envelope_members(envelope)
         context = {
             'envelope_id': envelope_id,
             'envelope': envelope,
             'user': user,
             'prev_answers': prev_answers,
             'started': started,
+            'ended': ended,
+            'published': published,
+            'members': members,
         }
         if request.method == 'POST' and envelope_member(user, envelope_id):
             # if question period has begun
@@ -194,8 +200,20 @@ def envelope_started(envelope):
     start_date = (envelope.envelope_query_date - today).days
     if start_date > 0:
         return False
-    else:
+    return True
+
+def envelope_ended(envelope):
+    today = timezone.localdate()
+    if envelope.envelope_due_date <= today:
         return True
+    return False
+
+def get_envelope_members(envelope):
+    users = {}
+    members = UserGroup.objects.filter(envelope=envelope)
+    for member in members:
+        users[member.display_name] = member.user
+    return users
 
 # retrieves all questions associated with envelope
 # @return [dictionary] - {all questions, corresponding ids}
