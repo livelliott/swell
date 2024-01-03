@@ -21,3 +21,4 @@ class Answer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     question = models.ForeignKey(BaseQuestion, on_delete=models.CASCADE, null=True)
     user_answer = models.CharField(max_length=2000)
+    display_name = models.CharField(max_length=50, null=True)

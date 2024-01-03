@@ -44,19 +44,27 @@
           </div>
           <div class="content-container">
             <!-- for the questions in the envelope -->
-            {% for question, prev_answer in prev_answers.items %}
+            {% for question, answers in question_answers.items %}
               {% if question.is_enabled %}
-                <div class="question question-answers">
-                  <label class="prompt" for="{{ question.id }}">{{ question.content }}
+                <div class="question-answers">
+                  <label class="question" for="{{ question.id }}">{{ question.content }}
                     {% if question.user %}
                         <p class="asked-by">asked by {{ question.display_name }}</p>
                       {% else %}
                         <p class="asked-by">asked by SoWell</p>
                     {% endif %}
                   </label>
+                  {% if not answers %}
+                    <div class="answer">No one answered this question... kinda awkward :O</div>
+                  {% else %}
+                    {% for answer in answers %}
+                      <div class="answer"><b>{{ answer.display_name }}:</b> {{ answer.user_answer }}</div>
+                    {% endfor %}
+                  {% endif %}
                 </div>
               {% endif %}
             {% endfor %}
+            <a class="btn-cancel" href="{% url 'board:board_home' %}">Return to Home</a>
           {% else %}
           <form method="post" action="">
             {% csrf_token %}

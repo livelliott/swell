@@ -28,6 +28,7 @@ def envelope(request, envelope_id):
     user = request.user
     try:
         user_group = UserGroup.objects.get(user=user, env_id=envelope_id)
+        display_name = user_group.display_name
         envelope = user_group.envelope
         questions = get_envelope_questions(envelope)['questions']
         prev_answers = get_previous_answers(envelope, user, questions)
@@ -36,9 +37,11 @@ def envelope(request, envelope_id):
         ended = envelope_ended(envelope)
         published = envelope.envelope_due_date.strftime("%B %d, %Y")
         members = get_envelope_members(envelope)
+        question_answers = get_all_question_answers(questions)
         context = {
             'envelope_id': envelope_id,
             'envelope': envelope,
+            'question_answers': question_answers,
             'user': user,
             'prev_answers': prev_answers,
             'started': started,
@@ -67,7 +70,7 @@ def envelope(request, envelope_id):
                                 answered.save()
                             else:
                                 # else create it 
-                                answer = Answer(user=request.user, question=question, user_answer=user_answer)
+                                answer = Answer(user=request.user, question=question, user_answer=user_answer, display_name=display_name)
                                 answer.save()
                                 envelope.user_answers.add(answer)
                 messages.success(request, f"Saved answers for {envelope.envelope_name}.")
@@ -218,9 +221,9 @@ def get_envelope_members(envelope):
 # retrieves all questions associated with envelope
 # @return [dictionary] - {all questions, corresponding ids}
 def get_envelope_questions(envelope):
-    questions_user = envelope.questions_user.all()
     questions_default = DefaultQuestionEnvelope.objects.filter(envelope_id=envelope.envelope_id)
-    all_questions = list(chain(questions_user, questions_default))
+    questions_user = envelope.questions_user.all()
+    all_questions = list(chain(questions_default, questions_user))
     question_ids = [ str(q.id) for q in all_questions ]
     return { 'questions': all_questions, 'answers': question_ids }
 
@@ -245,3 +248,15 @@ def envelope_member(user, envelope_id):
         return True
     except ObjectDoesNotExist:
         return False
+
+# all_questions = get_envelope_questions(envelope)['questions']
+def get_all_question_answers(all_questions):
+    all_answers = {}
+    # for each question
+    for question in all_questions:
+        # get all of the answers for it
+        empty_answers = Answer.objects.filter(question=question, user_answer='')
+        empty_answers.delete()
+        all_answers[question] = Answer.objects.filter(question=question)
+    return all_answers
+

@@ -248,6 +248,7 @@ body:hover * {
 
 .envelope-info {
     padding: 1em 0em;
+    margin-bottom: 1em;
 }
 
 .content-container {
@@ -258,10 +259,14 @@ body:hover * {
 
 .question-answers {
     background-color: var(--bg-grey);
-    padding: 1em 2em;
+    padding: 2em;
 }
 
 .question {
     font-family: 'Yeseva One', serif;
     font-size: 1.3rem;
+}
+
+.answer {
+    margin-top: 0.8em;
 }
