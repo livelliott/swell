@@ -1,5 +1,6 @@
 from django.http import HttpResponseServerError
 from django.shortcuts import render, redirect, reverse
+from .utils import get_all_question_answers, get_envelope_members
 from .models import UserGroup
 from envelope.models import Envelope
 from question.models import Answer, BaseQuestion, UserQuestion, DefaultQuestionEnvelope
@@ -9,6 +10,10 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from envelope.views import valid_invite, send_invite
 from django.utils import timezone
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.conf import settings
 
 @login_required
 def home_page(request):
@@ -211,13 +216,6 @@ def envelope_ended(envelope):
         return True
     return False
 
-def get_envelope_members(envelope):
-    users = {}
-    members = UserGroup.objects.filter(envelope=envelope)
-    for member in members:
-        users[member.display_name] = member.user
-    return users
-
 # retrieves all questions associated with envelope
 # @return [dictionary] - {all questions, corresponding ids}
 def get_envelope_questions(envelope):
@@ -248,15 +246,4 @@ def envelope_member(user, envelope_id):
         return True
     except ObjectDoesNotExist:
         return False
-
-# all_questions = get_envelope_questions(envelope)['questions']
-def get_all_question_answers(all_questions):
-    all_answers = {}
-    # for each question
-    for question in all_questions:
-        # get all of the answers for it
-        empty_answers = Answer.objects.filter(question=question, user_answer='')
-        empty_answers.delete()
-        all_answers[question] = Answer.objects.filter(question=question)
-    return all_answers
 

@@ -7,13 +7,14 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from question.models import DefaultQuestion, DefaultQuestionEnvelope, UserQuestion
 from board.models import Invitation, UserGroup
+from board.tasks import schedule_send_envelope_email
 from envelope.models import Envelope
 from .forms import EnvelopeForm
 from swell.constants import EMAIL_PATTERN
 from django.core.mail import send_mail
 from django.utils import timezone
 from django.conf import settings
-from datetime import timedelta, date
+from datetime import datetime, timedelta, date
 import json
 import re
 import os
@@ -66,12 +67,13 @@ def envelope_create_prompts(request):
             # retrieve data from current and previous page
             data = json.loads(envelope_data)
             envelope_frequency = data['envelope_frequency']
+            envelope_due_date = (envelope_query_date + timedelta(days=envelope_frequency)).strftime("%Y-%m-%d")
             # create envelope instance
             envelope = Envelope(
                 envelope_name=data['envelope_name'],
                 envelope_admin=request.user,
                 envelope_frequency=envelope_frequency,
-                envelope_due_date=(envelope_query_date + timedelta(days=envelope_frequency)).strftime("%Y-%m-%d"))
+                envelope_due_date=envelope_due_date)
             envelope.save()
             # create corresponding user group for admin
             user_group = UserGroup(user=request.user, display_name=display_name, envelope=envelope, env_id=envelope.envelope_id)
@@ -79,6 +81,9 @@ def envelope_create_prompts(request):
             # add default + custom questions to envelope
             default_questions(envelope, questions)
             user_questions(envelope, request.user, prompts)
+            # schedule email publishing date
+            scheduled_time = datetime.strptime(envelope_due_date, "%Y-%m-%d")
+            schedule_send_envelope_email(envelope.envelope_id, scheduled_time)
             request.session['envelope_id'] = str(envelope.envelope_id)
             messages.success(request, f"Successfully added prompts to Envelope.")
             return redirect('envelope:envelope_create_invite')
