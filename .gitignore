@@ -41,3 +41,6 @@ db.sqlite3
 
 # Admin files
 admin/
+
+# Celery files
+*.rdb

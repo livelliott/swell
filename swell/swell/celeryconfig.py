@@ -6,7 +6,7 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'  # Replace with your backend 
 
 CELERY_BEAT_SCHEDULE = {
     'send-envelopes': {
-        'task': 'board.tasks.send_envelope_email_task',
+        'task': 'board.tasks.schedule_send_envelope_email',
         'schedule': timedelta(days=1),
     },
 }
