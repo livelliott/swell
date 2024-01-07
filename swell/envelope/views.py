@@ -14,7 +14,7 @@ from swell.constants import EMAIL_PATTERN
 from django.core.mail import send_mail
 from django.utils import timezone
 from django.conf import settings
-from datetime import datetime, timedelta, date
+from datetime import datetime, time, timedelta, date
 import json
 import re
 import os
@@ -82,7 +82,7 @@ def envelope_create_prompts(request):
             default_questions(envelope, questions)
             user_questions(envelope, request.user, prompts)
             # schedule email publishing date
-            scheduled_time = datetime.strptime(envelope_due_date, "%Y-%m-%d")
+            scheduled_time = datetime.combine(datetime.strptime(envelope_due_date, "%Y-%m-%d"), time(12, 0))
             schedule_send_envelope_email(envelope.envelope_id, scheduled_time)
             request.session['envelope_id'] = str(envelope.envelope_id)
             messages.success(request, f"Successfully added prompts to Envelope.")

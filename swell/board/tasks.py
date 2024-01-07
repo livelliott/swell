@@ -34,5 +34,4 @@ def send_envelope_email_task(envelope_id):
 @shared_task
 def schedule_send_envelope_email(envelope_id, scheduled_time):
     # Schedule the task to run at the specified time
-    # send_envelope_email_task.apply_async(args=[envelope_id], eta=scheduled_time)        
-    send_envelope_email_task.apply_async(args=[envelope_id], eta=(timezone.now() + timezone.timedelta(minutes=1)).astimezone(timezone.get_current_timezone()))
+    send_envelope_email_task.apply_async(args=[envelope_id], eta=scheduled_time)

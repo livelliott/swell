@@ -2,316 +2,43 @@
     <head>
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Karla:wght@300;400;600&family=Yeseva+One&display=swap');
-
-            *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            }
-
-            :root {
-            --white: #ffffff;
-            --black: #000; 
-            --main-blue: #538FE8;
-            --hover-text-blue: #4274bf;
-            --hover-btn-blue: #8fb9f9;
-            --hover-bg-blue: #dae7fb;
-            --outline-grey: #d5d5d5;
-            --hover-blue: #eff6ff;
-            --bg-blue: #EEF4FD;
-            --text-grey: #8e8e8e;
-            --btn-grey: #bcbcbc;
-            --bg-grey: #f4f4f4;
-            --outline-green: #9CD29D;
-            --main-green: #d6edd6;
-            }
-
-            body {
-                font-family: 'Karla', sans-serif;
-                background-color: var(--bg-blue);
-                width: 100%;
-                min-height: 100vh; /* Ensure the body takes at least the full viewport height */
-                display: grid;
-                place-items: center;
-            }
-
-            body:hover * {
-                transition: all 0.2s cubic-bezier(.68,0,.68,.86);
-            }
-
-            .container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                width: 100%;
-                margin: 5em 0;
-            }
-
-            .section {
-                width: 65%;
-                background-color: var(--white);
-                padding: 5em 6em;
-                border: 0.12em solid var(--outline-grey);
-            }
-
-            .main-title {
-                font-size: 2.5rem;
-                font-family:  'Yeseva One', serif;
-            }
-
-            .title {
-                font-size: 1.8rem;
-                font-family: 'Yeseva One', serif;
-                margin-top: 1em;
-            }
-
-            .page-nav {
-                display: flex;
-                flex-direction: row;
-                background-color: var(--bg-blue);
-                justify-content: space-between;
-                margin-top: 1.5em;
-                border-radius: 0.2em;
-            }
-
-            .nav-link {
-                text-decoration: none;
-                color: var(--main-blue);
-                padding: 1em;
-                width: 100%;
-                display: flex;
-                justify-content: center;
-            }
-
-            .nav-link:hover {
-                color: var(--hover-text-blue);
-                background-color: var(--hover-bg-blue);
-            }
-
-            .asked-by {
-                font-family: 'Karla', sans-serif;
-                font-style: italic;
-                font-size: 0.85rem;
-                margin-top: 0.2em;
-                color: var(--text-grey);
-                font-weight: 100;
-            }
-
-            .prompt-text {
-                display: flex;
-                flex-direction: column;
-                font-size: 1em;
-            }
-
-            .prompt {
-                margin-bottom: 0.5em;
-                margin-top: 2em;
-            }
-
-            .text-field {
-                padding: 0.8em;
-                border-radius: 0.2em;
-                border: 0.12em solid var(--outline-grey);
-                font-family: 'Karla', sans-serif;
-                font-size: 1rem;
-                color: var(--text-grey);
-                width: 100%;
-                margin-top: 1em;
-            }
-
-            .text-field:focus {
-                border: 0.12em solid var(--main-blue);
-                outline: none;  
-            }
-
-            .text-field-large {
-                height: 7rem;
-                resize: none;
-            }
-
-            .sub-title {
-                margin-top: 0.5em;
-            }
-
-            .sub-prompt {
-                font-size: 1rem;
-                color: var(--text-grey);
-                font-weight: 100;
-                margin-top: 0.5em;
-            }
-
-            .btns {
-                margin-top: 2.5em;
-                gap: 1.5em;
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-            }
-
-            .btn-cancel {
-                background-color: var(--white);
-                border: 0.12rem solid var(--black);
-                font-size: 1.1rem;
-                color: var(--black);
-                width: 100%;
-                padding: 0.7em 2em;
-                text-align: center;
-                text-decoration: none;
-                border-radius: 0.2em;
-                cursor: pointer;
-            }
-
-            .btn-next {
-                font-family: 'Karla', sans-serif;
-                width: 100%;
-                font-weight: bold;
-                background-color: var(--main-blue);
-                font-size: 1.1rem;
-                color: var(--white);
-                width: 100%;
-                padding: 0.7em 2em;
-                text-align: center;
-                text-decoration: none;
-                border-radius: 0.2em;
-                border: none;
-                outline: none;
-            }
-
-            .btn-cancel:hover {
-                background-color: var(--btn-grey);
-                border: 0.12rem solid var(--btn-grey);
-                color: var(--white);
-            }
-
-            .btn-next:hover {
-                cursor: pointer;
-                background-color: var(--hover-btn-blue);
-            }
-
-            #admin-member {
-                display: flex;
-                flex-direction: row;
-            }
-
-            .prompt-box {
-                font-size: 1rem;
-                display: flex;
-                flex-direction: row;
-                gap: 0.8rem;
-                margin-top: 1rem;
-                align-items: center;
-            }
-
-            .success-box {
-                margin: 0;
-                background-color: var(--main-green);
-                border: 0.12em solid var(--outline-green);
-                padding: 1em;
-                font-style: italic;
-                border-radius: 0.2em;
-                margin-top: 1em;
-            }
-
-            .add-custom-prompt {
-                z-index: 100;
-                position: fixed;
-                top: 20%;
-                left: 20%;
-                width: 60%;
-                height: 45%;
-            }
-
-            .input-button {
-                display: flex;
-                flex-direction: row;
-                gap: 1.5em;
-                margin-top: 1em;
-            }
-
-            .text-field-inline {
-                margin-top: 0;
-            }
-
-            .button-inline {
-                width: 50%;
-            }
-
-            .title-invite {
-                font-size: 1.5rem;
-                margin: 1em 0em 1em 0em;
-            }
-
-            .name {
-                margin: 1em 0em 1em 0em;
-            }
-
-            .hyperlink {
-                color: var(--main-blue);
-                font-weight: bold;
-            }
-
-            .envelope-info {
-                padding: 1em 0em;
-                margin-bottom: 1em;
-            }
-
-            .content-container {
-                display: flex;
-                flex-direction: column;
-                gap: 2em;
-            }
-
-            .question-answers {
-                background-color: var(--bg-grey);
-                padding: 2em;
-            }
-
-            .question {
-                font-family: 'Yeseva One', serif;
-                font-size: 1.3rem;
-            }
-
-            .answer {
-                margin-top: 0.8em;
-            }
         </style>
     </head>
-    <body>
-        <div class="container">
-            <div class="section">
+    <body style="font-family: 'Karla', sans-serif; background-color: white; margin: 0; padding: 0;">
+        <div class="container" style="width: 100%; box-sizing: border-box;">
+            <div class="section" style="width: 65%; background-color: white; box-sizing: border-box;">
                 {% block content %}
-                <div class="main-title">Issue #{{ envelope.envelope_issue}}: {{ envelope.envelope_name }}</div>
-                <div class="envelope-info" style="background-color: #f4f4f4; padding: 1em 2em; margin: 1em 0em 2em 0em;">
-                    <p style="margin-bottom: 0.5em;"><b>{{ published }}</b></p>
-                    <p class="asked-by">By
-                    {% for name, member in members.items %}
-                        {{ name }}{% if not forloop.last %},{% endif %}
-                    {% endfor %}
+                <div class="main-title" style="font-size: 1.5rem; font-family: 'Yeseva One', serif;">Issue #{{ envelope.envelope_issue}}: {{ envelope.envelope_name }}</div>
+                <div class="envelope-info" style="background-color: white; font-weight: bold;">
+                    {{ published }}
+                    <p class="asked-by" style="font-style: italic; font-size: 0.8rem; color: #8e8e8e; font-weight: 100;">
+                        By {% for name, member in members.items %}{{ name }}{% if not forloop.last %},{% endif %}{% endfor %}
                     </p>
                 </div>
-                <div class="content-container">
-                    <!-- for the questions in the envelope -->
-                    {% for question, answers in question_answers.items %}
-                        {% if question.is_enabled %}
-                            <div class="question-answers">
-                                <label class="question" for="{{ question.id }}">{{ question.content }}
+                {% for question, answers in question_answers.items %}
+                    {% if question.is_enabled %}
+                        <div class="content-container" style="margin-top: 1em;">
+                            <div class="question-answers" style="background-color: #f4f4f4; padding: 1em;">
+                                <label class="question" style="font-size: 1rem; font-family: 'Yeseva One', serif;">
+                                    {{ question.content }}
                                     {% if question.user %}
-                                        <p class="asked-by">asked by {{ question.display_name }}</p>
+                                        <p class="asked-by" style="font-weight: 100; font-style: italic; font-size: 0.8rem; color: #8e8e8e; font-family: 'Karla', sans-serif;">asked by {{ question.display_name }}</p>
                                     {% else %}
-                                        <p class="asked-by">asked by SoWell</p>
+                                        <p class="asked-by" style="font-weight: 100; font-style: italic; font-size: 0.8rem; color: #8e8e8e; font-family: 'Karla', sans-serif;">asked by SoWell</p>
                                     {% endif %}
                                 </label>
                                 {% if not answers %}
-                                    <div class="answer">No one answered this question... kinda awkward :O</div>
+                                    <div class="answer" style="margin-top: 0.5em;">No one answered this question... :O</div>
                                 {% else %}
                                     {% for answer in answers %}
-                                    <div class="answer"><b>{{ answer.display_name }}:</b> {{ answer.user_answer }}</div>
+                                    <div class="answer" style="margin-top: 0.5em;"><b>{{ answer.display_name }}: </b>{{ answer.user_answer }}</div>
                                     {% endfor %}
                                 {% endif %}
+                               </div>
                             </div>
-                        {% endif %} 
-                    {% endfor %}
-                    <a class="btn-next" href="">Add Go to SoWell button</a>
+                          {% endif %} 
+                        {% endfor %}
+                    <a class="btn-next" href="#" style="background-color: #538FE8; color: white; text-decoration: none; padding: 0.7em 2em; text-align: center; border-radius: 0.2em; display: inline-block; margin-top: 1em; font-weight: bold;">Add Go to SoWell button</a>
                 {% endblock %}
                 </div>
             </div>
