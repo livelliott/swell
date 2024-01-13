@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from question.models import DefaultQuestion, DefaultQuestionEnvelope, UserQuestion
 from board.models import Invitation, UserGroup
-from board.tasks import schedule_send_envelope_email
+from board.tasks import schedule_send_envelope_email, update_envelope_task
 from envelope.models import Envelope
 from .forms import EnvelopeForm
 from swell.constants import EMAIL_PATTERN
@@ -85,6 +85,11 @@ def envelope_create_prompts(request):
             scheduled_time = datetime.combine(datetime.strptime(envelope_due_date, "%Y-%m-%d"), time(12, 0))
             schedule_send_envelope_email(envelope.envelope_id, scheduled_time)
             request.session['envelope_id'] = str(envelope.envelope_id)
+            # schedule time to update envelope for next instance
+            update_envelope_time = datetime.combine((datetime.strptime(envelope_due_date, '%Y-%m-%d').date() + timedelta(days=(envelope_frequency - 2))), time(0, 0))
+            # update_envelope_time = datetime.now() + timedelta(minutes=5)
+            update_envelope_task(envelope.envelope_id, update_envelope_time)
+            # redirect to invite page
             messages.success(request, f"Successfully added prompts to Envelope.")
             return redirect('envelope:envelope_create_invite')
         else:
