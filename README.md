@@ -43,4 +43,5 @@ python3 manage.py runserver
 ```
 2. Visit [http://localhost:8000/](http://localhost:8000/) on your browser to access the application.
 
-This project is inspired by the web app [LetterLoop](https://app.letterloop.co/).
+
+*This project is inspired by the web app [LetterLoop](https://app.letterloop.co/).*
