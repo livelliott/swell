@@ -4,6 +4,11 @@ Swell is a communcication platform that allows users to connect with their frien
 
 Built with **Python** and **Django**.
 
+<p float="left">
+  <img src="swell/staticfiles/images/envelope-1.png" width="100" />
+  <img src="swell/staticfiles/images/envelope-2.png" width="100" />
+</p>
+
 ## As a user, you may...
 - Register, login, and logout of the app
 - Create Envelope groups with personalized questions
