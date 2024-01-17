@@ -1,6 +1,6 @@
 # Swell
 ## About the Project
-Swell is a communcication platform that allows users to connect with their friends and family. Users create groups known as *Envelopes,* which contain custom questions for members to fill out. Once completed, members will recieve a published version of the Envelope in their inbox!
+Swell is a communication platform that allows users to connect with their friends and family. Users create groups known as *Envelopes,* which contain custom questions for members to fill out. Once completed, members will recieve a published version of the Envelope in their inbox!
 
 Built with **Python** and **Django**.
 
