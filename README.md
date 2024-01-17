@@ -13,7 +13,31 @@ Swell is a communcication platform that allows users to connect with their frien
 Before you begin, ensure you have Python 3.8.0 or later.
 
 ### Installation
-1. Clone the repo:
-```python
+1. Clone the repository:
+```
 git clone https://github.com/livelliott/swell.git
 ```
+2. Create a virtual environment:
+```
+python3 -m venv venv
+```
+3. Activate the virtual environment.
+4. Install project dependencies:
+```
+pip3 install -r requirements.txt
+```
+
+### Installation
+1. Create a copy of the example environment file:
+```
+cp .env.example .env
+```
+2. Modify the .env file to support your local configuration settings.
+
+### Running the Development Server
+1. Start the developement server:
+```
+python3 manage.py runserver
+```
+2. Visit [http://localhost:8000/](http://localhost:8000/) on your browser to access the application.
+
