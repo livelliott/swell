@@ -2,6 +2,8 @@
 ## About the Project
 Swell is a communcication platform that allows users to connect with their friends and family. Users create groups known as *Envelopes,* which contain custom questions for members to fill out. Once completed, members will recieve a published version of the Envelope in their inbox!
 
+Built with **Python** and **Django**.
+
 ## As a user, you may...
 - Register, login, and logout of the app
 - Create Envelope groups with personalized questions
@@ -10,7 +12,7 @@ Swell is a communcication platform that allows users to connect with their frien
 - Receive periodic emails containing Envelope updates with [Celery](https://docs.celeryq.dev/en/stable/userguide/periodic-tasks.html)
 
 ## Getting Started
-Before you begin, ensure you have Python 3.8.0 or later.
+Before you begin, ensure you have installed Python 3.8.0 or later.
 
 ### Installation
 1. Clone the repository:
@@ -34,10 +36,11 @@ cp .env.example .env
 ```
 2. Modify the .env file to support your local configuration settings.
 
-### Running the Development Server
+### Running the Project
 1. Start the developement server:
 ```
 python3 manage.py runserver
 ```
 2. Visit [http://localhost:8000/](http://localhost:8000/) on your browser to access the application.
 
+This project is inspired by the web app [LetterLoop](https://app.letterloop.co/).
